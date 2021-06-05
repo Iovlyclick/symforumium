@@ -11,20 +11,16 @@ title %}Log in!
 						<div class="card-body">
 							<form class="form-horizontal" role="form" method="post">
 								{% if app.user %}
-									<AmpContent>
 										<div class="alert alert-danger">
 											{{ error.messageKey|trans(error.messageData, 'security') }}
 										</div>
 
-									</NonAmpContent>
-									<AmpContent>
 										<div class="mb-3">
 											You are logged in as
 											{{ app.user.username }},
 											<a href="{{ path('app_logout') }}">Logout</a>
 										</div>
 
-									</NonAmpContent>
 								{% endif %}
 								<div class="card-header mb-3">Please sign in</div>
 								<div class="form-group">

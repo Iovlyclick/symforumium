@@ -36,6 +36,21 @@ class User implements UserInterface
      */
     private $name;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $likedTopic;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $likedPost;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $likedComment;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -118,6 +133,42 @@ class User implements UserInterface
     public function setName(string $name): self
     {
         $this->name = $name;
+        return $this;
+    }
+
+    public function getLikedTopic(): ?string
+    {
+        return $this->likedTopic;
+    }
+
+    public function setLikedTopic(?string $likedTopic): self
+    {
+        $this->likedTopic = $likedTopic;
+
+        return $this;
+    }
+
+    public function getLikedPost(): ?string
+    {
+        return $this->likedPost;
+    }
+
+    public function setLikedPost(?string $likedPost): self
+    {
+        $this->likedPost = $likedPost;
+
+        return $this;
+    }
+
+    public function getLikedComment(): ?string
+    {
+        return $this->likedComment;
+    }
+
+    public function setLikedComment(?string $likedComment): self
+    {
+        $this->likedComment = $likedComment;
+
         return $this;
     }
 }

@@ -3,13 +3,15 @@
 {% block title %}Welcome to SlackOverflow{% endblock %}
 
 {% block body %}
-    {% for topic in topics %}
-        <h3>
-            {{ topic.title }}
-        </h3>
-        <p>
-            {{ topic.author }}<br>
-            {{ topic.content}}
-        </p>
-    {% endfor %}
+    {% if topics %}
+        {% for topic in topics %}
+            <h3>
+                {{ topic.title }}
+            </h3>
+            <p>
+                {{ topic.author }}<br>
+                {{ topic.content}}
+            </p>
+        {% endfor %}
+    {% endif %}
 {% endblock %}

@@ -23,7 +23,7 @@ class TopicController extends AbstractController
 
         return $this->render('topic/index.html.twig', [
             'controller_name' => 'TopicController',
-            'topics' => $topics,
+            'topics' => $topics ? $topics : NULL,
         ]);
     }
 
@@ -69,4 +69,19 @@ class TopicController extends AbstractController
             'topic' => $topic,
         ]);
     }
+
+        /**
+     * @Route("/topic/{id}/delete", name="topic_delete")
+     */
+    public function delete(Topic $topic, EntityManagerInterface $manager)
+    {
+
+        if (in_array('ROLE_ADMIN', $this->getUser()->getRoles()) || $this->getUser() === $topic->getAuthor()) {
+            $manager->remove($topic);
+            $manager->flush();
+        }
+
+        return $this->redirectToRoute('topic');
+    }
+
 }

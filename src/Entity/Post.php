@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PostRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -18,9 +20,10 @@ class Post
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="posts")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $userId;
+    private $author;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -45,26 +48,36 @@ class Post
     /**
      * @ORM\Column(type="integer")
      */
-    private $reportAmount;
+    private $topicId;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="likedPost")
      */
-    private $topicId;
+    private $userThatLiked;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     */
+    private $reportedBy;
+
+    public function __construct()
+    {
+        $this->userThatLiked = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUserId(): ?int
+    public function getAuthor(): ?User
     {
-        return $this->userId;
+        return $this->author;
     }
 
-    public function setUserId(int $userId): self
+    public function setAuthor(?User $author): self
     {
-        $this->userId = $userId;
+        $this->author = $author;
 
         return $this;
     }
@@ -117,18 +130,6 @@ class Post
         return $this;
     }
 
-    public function getReportAmount(): ?int
-    {
-        return $this->reportAmount;
-    }
-
-    public function setReportAmount(int $reportAmount): self
-    {
-        $this->reportAmount = $reportAmount;
-
-        return $this;
-    }
-
     public function getTopicId(): ?int
     {
         return $this->topicId;
@@ -137,6 +138,45 @@ class Post
     public function setTopicId(int $topicId): self
     {
         $this->topicId = $topicId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUserThatLiked(): Collection
+    {
+        return $this->userThatLiked;
+    }
+
+    public function addUserThatLiked(User $userThatLiked): self
+    {
+        if (!$this->userThatLiked->contains($userThatLiked)) {
+            $this->userThatLiked[] = $userThatLiked;
+            $userThatLiked->addLikedPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserThatLiked(User $userThatLiked): self
+    {
+        if ($this->userThatLiked->removeElement($userThatLiked)) {
+            $userThatLiked->removeLikedPost($this);
+        }
+
+        return $this;
+    }
+
+    public function getReportedBy(): ?User
+    {
+        return $this->reportedBy;
+    }
+
+    public function setReportedBy(?User $reportedBy): self
+    {
+        $this->reportedBy = $reportedBy;
 
         return $this;
     }

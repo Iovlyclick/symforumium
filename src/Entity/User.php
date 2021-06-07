@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 /**
@@ -37,19 +39,44 @@ class User implements UserInterface
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToMany(targetEntity=Topic::class, inversedBy="userThatLiked")
      */
     private $likedTopic;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToMany(targetEntity=Post::class, inversedBy="userThatLiked")
      */
     private $likedPost;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToMany(targetEntity=Comment::class, inversedBy="userThatLiked")
      */
     private $likedComment;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Topic::class, mappedBy="author")
+     */
+    private $topics;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author")
+     */
+    private $posts;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author")
+     */
+    private $comments;
+
+    public function __construct()
+    {
+        $this->likedTopic = new ArrayCollection();
+        $this->likedPost = new ArrayCollection();
+        $this->likedComment = new ArrayCollection();
+        $this->topics = new ArrayCollection();
+        $this->posts = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -136,39 +163,179 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getLikedTopic(): ?string
+        /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    /**
+     * @return Collection|Topic[]
+     */
+    public function getLikedTopic(): Collection
     {
         return $this->likedTopic;
     }
 
-    public function setLikedTopic(?string $likedTopic): self
+    public function addLikedTopic(Topic $likedTopic): self
     {
-        $this->likedTopic = $likedTopic;
+        if (!$this->likedTopic->contains($likedTopic)) {
+            $this->likedTopic[] = $likedTopic;
+        }
 
         return $this;
     }
 
-    public function getLikedPost(): ?string
+    public function removeLikedTopic(Topic $likedTopic): self
+    {
+        $this->likedTopic->removeElement($likedTopic);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Post[]
+     */
+    public function getLikedPost(): Collection
     {
         return $this->likedPost;
     }
 
-    public function setLikedPost(?string $likedPost): self
+    public function addLikedPost(Post $likedPost): self
     {
-        $this->likedPost = $likedPost;
+        if (!$this->likedPost->contains($likedPost)) {
+            $this->likedPost[] = $likedPost;
+        }
 
         return $this;
     }
 
-    public function getLikedComment(): ?string
+    public function removeLikedPost(Post $likedPost): self
+    {
+        $this->likedPost->removeElement($likedPost);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getLikedComment(): Collection
     {
         return $this->likedComment;
     }
 
-    public function setLikedComment(?string $likedComment): self
+    public function addLikedComment(Comment $likedComment): self
     {
-        $this->likedComment = $likedComment;
+        if (!$this->likedComment->contains($likedComment)) {
+            $this->likedComment[] = $likedComment;
+        }
 
         return $this;
+    }
+
+    public function removeLikedComment(Comment $likedComment): self
+    {
+        $this->likedComment->removeElement($likedComment);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Topic[]
+     */
+    public function getTopics(): Collection
+    {
+        return $this->topics;
+    }
+
+    public function addTopic(Topic $topic): self
+    {
+        if (!$this->topics->contains($topic)) {
+            $this->topics[] = $topic;
+            $topic->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTopic(Topic $topic): self
+    {
+        if ($this->topics->removeElement($topic)) {
+            // set the owning side to null (unless already changed)
+            if ($topic->getAuthor() === $this) {
+                $topic->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Post[]
+     */
+    public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
+
+    public function addPost(Post $post): self
+    {
+        if (!$this->posts->contains($post)) {
+            $this->posts[] = $post;
+            $post->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removePost(Post $post): self
+    {
+        if ($this->posts->removeElement($post)) {
+            // set the owning side to null (unless already changed)
+            if ($post->getAuthor() === $this) {
+                $post->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getAuthor() === $this) {
+                $comment->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString() {
+        return $this->name;
     }
 }

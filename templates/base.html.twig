@@ -3,37 +3,36 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<title>
-			{% block title %}Welcome!
-			{% endblock %}
+			{% block title %}Bienvenue{% endblock %}
 		</title>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/> {% block stylesheets %}{% endblock %}
+		{% block stylesheets %} {{ encore_entry_link_tags('app') }} {% endblock %}
 		</head>
 		<body>
-			<nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 70px;">
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 70px;">
 				<a class="navbar-brand" href="#">Symforumium</a>
 				<div class="collapse navbar-collapse" id="navbarSupportedContent"></div>
 				<ul class="nav navbar-nav navbar-right">
 					{% if app.user %}
                             <li>
-                                <a class="nav-link" href="{{ path('topic') }}">View Topics</a>
+                                <a class="nav-link" href="{{ path('topic') }}">Voir les sujets</a>
                             </li>
                             <li>
-                                <a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
+                                <a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
                             </li>
 
                     {% else %}
 
                             <li>
-                                <a class="nav-link" href="{{ path('app_login') }}">Login</a>
+                                <a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
                             </li>
                             <li>
-                                <a class="nav-link" href="{{ path('registration') }}">Register</a>
+                                <a class="nav-link" href="{{ path('registration') }}">Créer un compte</a>
                             </li>
 
                     {% endif %}
 				</ul>
 			</nav>
 			{% block body %}{% endblock %}
-			{% block javascripts %}{% endblock %}
+			{% block javascripts %} {{ encore_entry_script_tags('app') }} {% endblock %}
 		</body>
 	</html>

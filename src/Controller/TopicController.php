@@ -33,16 +33,16 @@ class TopicController extends AbstractController
      */
     public function form(Topic $topic = NULL, Request $request, EntityManagerInterface $manager)
     {
-        
+
         if (!$topic) {
             $topic = new Topic();
         }
 
-        $form = $this->createForm(TopicType::class, $topic); 
+        $form = $this->createForm(TopicType::class, $topic);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() ) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $topic->setAuthor($this->getUser());
             if (!$topic->getId()) {
                 $topic->setCreatedAt(new \DateTime());
@@ -55,7 +55,7 @@ class TopicController extends AbstractController
         }
         return $this->render('topic/create.html.twig', [
             'formTopic' => $form->createView(),
-            'editMode' => $topic->getId()!== NULL,
+            'editMode' => $topic->getId() !== NULL,
         ]);
     }
 
@@ -70,7 +70,7 @@ class TopicController extends AbstractController
         ]);
     }
 
-        /**
+    /**
      * @Route("/topic/{id}/delete", name="topic_delete")
      */
     public function delete(Topic $topic, EntityManagerInterface $manager)
@@ -83,5 +83,4 @@ class TopicController extends AbstractController
 
         return $this->redirectToRoute('topic');
     }
-
 }

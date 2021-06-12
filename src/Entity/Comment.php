@@ -26,19 +26,15 @@ class Comment
     private $author;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity=Post::class, inversedBy="comments")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $postId;
+
+    /**
+     * @ORM\Column(type="text")
      */
     private $content;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $editedAt;
 
     /**
      * @ORM\Column(type="integer")
@@ -46,23 +42,35 @@ class Comment
     private $likeAmount;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="boolean", nullable=true)
      */
-    private $postId;
+    private $reported;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="likedComment")
+     * @ORM\OneToMany(targetEntity=LikeStorage::class, mappedBy="commentId")
      */
-    private $userThatLiked;
+    private $likeStorages;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\OneToMany(targetEntity=ReportStorage::class, mappedBy="commentId")
      */
-    private $reportedBy;
+    private $reportStorages;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $lastEditedAt;
 
     public function __construct()
     {
-        $this->userThatLiked = new ArrayCollection();
+        $this->likeStorages = new ArrayCollection();
+        $this->reportStorages = new ArrayCollection();
+        $this->likeAmount = 0;
     }
 
     public function getId(): ?int
@@ -70,7 +78,6 @@ class Comment
         return $this->id;
     }
 
-    
     public function getAuthor(): ?User
     {
         return $this->author;
@@ -79,6 +86,18 @@ class Comment
     public function setAuthor(?User $author): self
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    public function getPostId(): ?Post
+    {
+        return $this->postId;
+    }
+
+    public function setPostId(?Post $postId): self
+    {
+        $this->postId = $postId;
 
         return $this;
     }
@@ -95,30 +114,6 @@ class Comment
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getEditedAt(): ?\DateTimeInterface
-    {
-        return $this->editedAt;
-    }
-
-    public function setEditedAt(\DateTimeInterface $editedAt): self
-    {
-        $this->editedAt = $editedAt;
-
-        return $this;
-    }
-
     public function getLikeAmount(): ?int
     {
         return $this->likeAmount;
@@ -131,53 +126,112 @@ class Comment
         return $this;
     }
 
-    public function getPostId(): ?int
+    public function addLike(): int
     {
-        return $this->postId;
+        $this->likeAmount++;
+
+        return $this->likeAmount;
     }
 
-    public function setPostId(int $postId): self
+    public function removeLike(): int
     {
-        $this->postId = $postId;
+        $this->likeAmount--;
+
+        return $this->likeAmount;
+    }
+
+    public function getReported(): ?bool
+    {
+        return $this->reported;
+    }
+
+    public function setReported(?bool $reported): self
+    {
+        $this->reported = $reported;
 
         return $this;
     }
 
     /**
-     * @return Collection|User[]
+     * @return Collection|LikeStorage[]
      */
-    public function getUserThatLiked(): Collection
+    public function getLikeStorages(): Collection
     {
-        return $this->userThatLiked;
+        return $this->likeStorages;
     }
 
-    public function addUserThatLiked(User $userThatLiked): self
+    public function addLikeStorage(LikeStorage $likeStorage): self
     {
-        if (!$this->userThatLiked->contains($userThatLiked)) {
-            $this->userThatLiked[] = $userThatLiked;
-            $userThatLiked->addLikedComment($this);
+        if (!$this->likeStorages->contains($likeStorage)) {
+            $this->likeStorages[] = $likeStorage;
+            $likeStorage->setCommentId($this);
         }
 
         return $this;
     }
 
-    public function removeUserThatLiked(User $userThatLiked): self
+    public function removeLikeStorage(LikeStorage $likeStorage): self
     {
-        if ($this->userThatLiked->removeElement($userThatLiked)) {
-            $userThatLiked->removeLikedComment($this);
+        if ($this->likeStorages->removeElement($likeStorage)) {
+            // set the owning side to null (unless already changed)
+            if ($likeStorage->getCommentId() === $this) {
+                $likeStorage->setCommentId(null);
+            }
         }
 
         return $this;
     }
 
-    public function getReportedBy(): ?User
+    /**
+     * @return Collection|ReportStorage[]
+     */
+    public function getReportStorages(): Collection
     {
-        return $this->reportedBy;
+        return $this->reportStorages;
     }
 
-    public function setReportedBy(?User $reportedBy): self
+    public function addReportStorage(ReportStorage $reportStorage): self
     {
-        $this->reportedBy = $reportedBy;
+        if (!$this->reportStorages->contains($reportStorage)) {
+            $this->reportStorages[] = $reportStorage;
+            $reportStorage->setCommentId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReportStorage(ReportStorage $reportStorage): self
+    {
+        if ($this->reportStorages->removeElement($reportStorage)) {
+            // set the owning side to null (unless already changed)
+            if ($reportStorage->getCommentId() === $this) {
+                $reportStorage->setCommentId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getLastEditedAt(): ?\DateTimeInterface
+    {
+        return $this->lastEditedAt;
+    }
+
+    public function setLastEditedAt(\DateTimeInterface $lastEditedAt): self
+    {
+        $this->lastEditedAt = $lastEditedAt;
 
         return $this;
     }

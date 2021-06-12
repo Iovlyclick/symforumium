@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SlackOverflow{% endblock %}
+
+{% block body %}
+	{# <h3>
+		{{ topic.title }} is topic {{ topic.id }}
+	</h3>
+	<p>
+		{{ topic.content }}
+	</p> #}
+	<p>
+		{{ post.author }} answered<br>
+		{{ post.content}} the {{ post.createdAt | date("m/d/Y")}} at {{ post.createdAt | date("H:i:s")}}
+	</p>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme formPost 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}Welcome to SlackOverflow
+{% endblock %}
+
+{% block body %}
+	<h1>
+		Réponse au topic {{ topic }}
+	</h1>
+
+	{{ form_start(formPost) }}
+
+	{{ form_row(formPost.content) }}
+
+	<button type="submit" class='btn btn-success'>
+		{% if editMode %}
+			Edit
+		{% else %}
+			Submit
+		{% endif %}
+	</button>
+	{{ form_end(formPost) }}
+{% endblock %}

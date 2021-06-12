@@ -36,34 +36,46 @@ class Topic
     private $content;
 
     /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $editedAt;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $likeAmount;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="likedTopic")
+     * @ORM\Column(type="boolean", nullable=true)
      */
-    private $userThatLiked;
+    private $reported;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class)
+     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="topicId")
      */
-    private $reportedBy;
+    private $posts;
+
+    /**
+     * @ORM\OneToMany(targetEntity=LikeStorage::class, mappedBy="topicId")
+     */
+    private $likeStorages;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ReportStorage::class, mappedBy="topicId")
+     */
+    private $reportStorages;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $lastEditedAt;
 
     public function __construct()
     {
+        $this->posts = new ArrayCollection();
+        $this->likeStorages = new ArrayCollection();
+        $this->reportStorages = new ArrayCollection();
         $this->likeAmount = 0;
-        $this->userThatLiked = new ArrayCollection();
 
     }
 
@@ -108,30 +120,6 @@ class Topic
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getEditedAt(): ?\DateTimeInterface
-    {
-        return $this->editedAt;
-    }
-
-    public function setEditedAt(?\DateTimeInterface $editedAt): self
-    {
-        $this->editedAt = $editedAt;
-
-        return $this;
-    }
-
     public function getLikeAmount(): ?int
     {
         return $this->likeAmount;
@@ -144,41 +132,141 @@ class Topic
         return $this;
     }
 
+    public function addLike(): int
+    {
+        $this->likeAmount++;
+        return $this->likeAmount;
+    }
+
+    public function removeLike(): int
+    {
+        $this->likeAmount--;
+
+        return $this->likeAmount;
+    }
+
+    public function getReported(): ?bool
+    {
+        return $this->reported;
+    }
+
+    public function setReported(?bool $reported): self
+    {
+        $this->reported = $reported;
+
+        return $this;
+    }
+
     /**
-     * @return Collection|User[]
+     * @return Collection|Post[]
      */
-    public function getUserThatLiked(): Collection
+    public function getPosts(): Collection
     {
-        return $this->userThatLiked;
+        return $this->posts;
     }
 
-    public function addUserThatLiked(User $userThatLiked): self
+    public function addPost(Post $post): self
     {
-        if (!$this->userThatLiked->contains($userThatLiked)) {
-            $this->userThatLiked[] = $userThatLiked;
-            $userThatLiked->addLikedTopic($this);
+        if (!$this->posts->contains($post)) {
+            $this->posts[] = $post;
+            $post->setTopicId($this);
         }
 
         return $this;
     }
 
-    public function removeUserThatLiked(User $userThatLiked): self
+    public function removePost(Post $post): self
     {
-        if ($this->userThatLiked->removeElement($userThatLiked)) {
-            $userThatLiked->removeLikedTopic($this);
+        if ($this->posts->removeElement($post)) {
+            // set the owning side to null (unless already changed)
+            if ($post->getTopicId() === $this) {
+                $post->setTopicId(null);
+            }
         }
 
         return $this;
     }
 
-    public function getReportedBy(): ?User
+    /**
+     * @return Collection|LikeStorage[]
+     */
+    public function getLikeStorages(): Collection
     {
-        return $this->reportedBy;
+        return $this->likeStorages;
     }
 
-    public function setReportedBy(?User $reportedBy): self
+    public function addLikeStorage(LikeStorage $likeStorage): self
     {
-        $this->reportedBy = $reportedBy;
+        if (!$this->likeStorages->contains($likeStorage)) {
+            $this->likeStorages[] = $likeStorage;
+            $likeStorage->setTopicId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikeStorage(LikeStorage $likeStorage): self
+    {
+        if ($this->likeStorages->removeElement($likeStorage)) {
+            // set the owning side to null (unless already changed)
+            if ($likeStorage->getTopicId() === $this) {
+                $likeStorage->setTopicId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ReportStorage[]
+     */
+    public function getReportStorages(): Collection
+    {
+        return $this->reportStorages;
+    }
+
+    public function addReportStorage(ReportStorage $reportStorage): self
+    {
+        if (!$this->reportStorages->contains($reportStorage)) {
+            $this->reportStorages[] = $reportStorage;
+            $reportStorage->setTopicId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReportStorage(ReportStorage $reportStorage): self
+    {
+        if ($this->reportStorages->removeElement($reportStorage)) {
+            // set the owning side to null (unless already changed)
+            if ($reportStorage->getTopicId() === $this) {
+                $reportStorage->setTopicId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getLastEditedAt(): ?\DateTimeInterface
+    {
+        return $this->lastEditedAt;
+    }
+
+    public function setLastEditedAt(\DateTimeInterface $lastEditedAt): self
+    {
+        $this->lastEditedAt = $lastEditedAt;
 
         return $this;
     }

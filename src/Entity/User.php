@@ -39,43 +39,39 @@ class User implements UserInterface
     private $name;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Topic::class, inversedBy="userThatLiked")
-     */
-    private $likedTopic;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Post::class, inversedBy="userThatLiked")
-     */
-    private $likedPost;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Comment::class, inversedBy="userThatLiked")
-     */
-    private $likedComment;
-
-    /**
      * @ORM\OneToMany(targetEntity=Topic::class, mappedBy="author")
      */
     private $topics;
 
     /**
-     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author")
+     * @ORM\OneToMany(targetEntity=Post::class, mappedBy="author", cascade={"persist"})
+     * 
      */
     private $posts;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author", cascade={"persist"}))
      */
     private $comments;
 
+    /**
+     * @ORM\OneToMany(targetEntity=LikeStorage::class, mappedBy="userId", orphanRemoval=true)
+     */
+    private $likeStorages;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ReportStorage::class, mappedBy="userId", orphanRemoval=true)
+     */
+    private $reportStorages;
+
+
     public function __construct()
     {
-        $this->likedTopic = new ArrayCollection();
-        $this->likedPost = new ArrayCollection();
-        $this->likedComment = new ArrayCollection();
         $this->topics = new ArrayCollection();
         $this->posts = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->likeStorages = new ArrayCollection();
+        $this->reportStorages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -173,76 +169,8 @@ class User implements UserInterface
         return (string) $this->email;
     }
 
-    /**
-     * @return Collection|Topic[]
-     */
-    public function getLikedTopic(): Collection
-    {
-        return $this->likedTopic;
-    }
-
-    public function addLikedTopic(Topic $likedTopic): self
-    {
-        if (!$this->likedTopic->contains($likedTopic)) {
-            $this->likedTopic[] = $likedTopic;
-        }
-
-        return $this;
-    }
-
-    public function removeLikedTopic(Topic $likedTopic): self
-    {
-        $this->likedTopic->removeElement($likedTopic);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Post[]
-     */
-    public function getLikedPost(): Collection
-    {
-        return $this->likedPost;
-    }
-
-    public function addLikedPost(Post $likedPost): self
-    {
-        if (!$this->likedPost->contains($likedPost)) {
-            $this->likedPost[] = $likedPost;
-        }
-
-        return $this;
-    }
-
-    public function removeLikedPost(Post $likedPost): self
-    {
-        $this->likedPost->removeElement($likedPost);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Comment[]
-     */
-    public function getLikedComment(): Collection
-    {
-        return $this->likedComment;
-    }
-
-    public function addLikedComment(Comment $likedComment): self
-    {
-        if (!$this->likedComment->contains($likedComment)) {
-            $this->likedComment[] = $likedComment;
-        }
-
-        return $this;
-    }
-
-    public function removeLikedComment(Comment $likedComment): self
-    {
-        $this->likedComment->removeElement($likedComment);
-
-        return $this;
+    public function __toString() {
+        return $this->name;
     }
 
     /**
@@ -335,7 +263,63 @@ class User implements UserInterface
         return $this;
     }
 
-    public function __toString() {
-        return $this->name;
+    /**
+     * @return Collection|LikeStorage[]
+     */
+    public function getLikeStorages(): Collection
+    {
+        return $this->likeStorages;
+    }
+
+    public function addLikeStorage(LikeStorage $likeStorage): self
+    {
+        if (!$this->likeStorages->contains($likeStorage)) {
+            $this->likeStorages[] = $likeStorage;
+            $likeStorage->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikeStorage(LikeStorage $likeStorage): self
+    {
+        if ($this->likeStorages->removeElement($likeStorage)) {
+            // set the owning side to null (unless already changed)
+            if ($likeStorage->getUserId() === $this) {
+                $likeStorage->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ReportStorage[]
+     */
+    public function getReportStorages(): Collection
+    {
+        return $this->reportStorages;
+    }
+
+    public function addReportStorage(ReportStorage $reportStorage): self
+    {
+        if (!$this->reportStorages->contains($reportStorage)) {
+            $this->reportStorages[] = $reportStorage;
+            $reportStorage->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReportStorage(ReportStorage $reportStorage): self
+    {
+        if ($this->reportStorages->removeElement($reportStorage)) {
+            // set the owning side to null (unless already changed)
+            if ($reportStorage->getUserId() === $this) {
+                $reportStorage->setUserId(null);
+            }
+        }
+
+        return $this;
     }
 }

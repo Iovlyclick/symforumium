@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ForumController!
+{% endblock %}
+
+{% block body %}
+	{% for topic in topics %}
+		<h3>
+			{{ topic.title }}
+		</h3>
+		<p>
+			{{ topic.content }}
+			{{ topic.createdAt|date("m/d/Y H:i") }}
+		</p>
+	{% endfor %}
+{% endblock %}

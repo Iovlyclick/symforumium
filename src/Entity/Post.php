@@ -134,17 +134,17 @@ class Post
 
     public function addLike(): int
     {
-        $this->likeAmount++;
-
+        $this->setLikeAmount(++$this->likeAmount);
         return $this->likeAmount;
     }
 
     public function removeLike(): int
     {
-        $this->likeAmount--;
+        $this->setLikeAmount(--$this->likeAmount);
 
         return $this->likeAmount;
     }
+
 
     public function getReported(): ?bool
     {

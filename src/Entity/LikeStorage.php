@@ -43,6 +43,11 @@ class LikeStorage
      */
     private $dislike;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $value;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -104,6 +109,18 @@ class LikeStorage
     public function setDislike(?bool $dislike): self
     {
         $this->dislike = $dislike;
+
+        return $this;
+    }
+
+    public function getValue(): ?string
+    {
+        return $this->value;
+    }
+
+    public function setValue(string $value): self
+    {
+        $this->value = $value;
 
         return $this;
     }

@@ -5,8 +5,11 @@ namespace App\Controller;
 use App\Entity\Topic;
 use App\Form\TopicType;
 use App\Entity\LikeStorage;
+use App\Entity\ReportStorage;
 use App\Repository\TopicRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\LikeStorageRepository;
+use App\Repository\ReportStorageRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,12 +24,12 @@ class TopicController extends AbstractController
      * 
      *  @IsGranted("ROLE_USER")
      */
-    public function index(TopicRepository $topicRepository): Response
+    public function listTopic(TopicRepository $topicRepository): Response
     {
 
-        $topics = $topicRepository->findAll();
+        $topics = $topicRepository->findBy(['reported' => NULL]);
 
-        return $this->render('forum/index.html.twig', [
+        return $this->render('forum/topic/list.html.twig', [
             'controller_name' => 'TopicController',
             'topics' => $topics,
         ]);
@@ -37,13 +40,14 @@ class TopicController extends AbstractController
      * @Route("/topic/{id}/edit", name="edit_topic")
      * 
      * @IsGranted("ROLE_USER")
-     * 
      */
     public function formTopic(Topic $topic = NULL, Request $request, EntityManagerInterface $manager)
     {
-        
         if (!$topic) {
             $topic = new Topic();
+        } elseif ($topic->getLikeAmount() !== 0 || $topic->getReported() === TRUE || strtotime($topic->getCreatedAt()->format('Y-m-d H:i:s')) < strtotime('-30 minutes')) {
+
+            return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
         }
 
         $form = $this->createForm(TopicType::class, $topic); 
@@ -51,8 +55,8 @@ class TopicController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid() ) {
-            $topic->setAuthor($this->getUser());
             if (!$topic->getId()) {
+                $topic->setAuthor($this->getUser());
                 $current_date = new \DateTime();
                 $topic->setCreatedAt($current_date);
                 $topic->setLastEditedAt($current_date);
@@ -63,7 +67,7 @@ class TopicController extends AbstractController
 
             return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
         }
-        return $this->render('topic/create.html.twig', [
+        return $this->render('/forum/topic/create.html.twig', [
             'formTopic' => $form->createView(),
             'editMode' => $topic->getId()!== NULL,
         ]);
@@ -79,7 +83,7 @@ class TopicController extends AbstractController
     {
 
 
-        return $this->render('forum/show.html.twig', [
+        return $this->render('forum/topic/show.html.twig', [
             'controller_name' => 'TopicController',
             'topic' => $topic,
         ]);
@@ -93,59 +97,85 @@ class TopicController extends AbstractController
      */
     public function deleteTopic(Topic $topic, EntityManagerInterface $manager, TopicRepository $topicRepository): Response
     {
+        if ($topic->getLikeAmount() !== 0 || $topic->getReported() === TRUE || strtotime($topic->getCreatedAt()->format('Y-m-d H:i:s')) < strtotime('-30 minutes')) {
+
+            return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
+        }
+
         $manager->remove($topic);
         $manager->flush();
         
         $topics = $topicRepository->findAll();
 
-        return $this->render('forum/index.html.twig', [
+        return $this->render('forum/topic/list.html.twig', [
             'controller_name' => 'TopicController',
             'topics' => $topics,
         ]);
     }
 
-        /**
+    /**
      * @Route("/topic/{id}/like", name="like_topic")
+     * 
+     * @Paramconverter("topic", options={"mapping": {"id" : "id"}})
      * 
      *  @IsGranted("ROLE_USER")
      */
-    public function like(LikeStorage $like = NULL, Topic $topic, EntityManagerInterface $manager)
+    public function like(Topic $topic, EntityManagerInterface $manager, LikeStorageRepository $likeStorageRepository)
     {
+        $like = $likeStorageRepository->findOneBy(['userId' => $this->getUser(), 'topicId' => $topic->getId()]);
+
         if (!$like) {
             $like = New LikeStorage();
             $like->setUserId($this->getUser());
             $like->setTopicId($topic);
+            $like->setValue('like');
             $topic->addLike();
             $manager->persist($topic);
             $manager->persist($like);
             $manager->flush();
+        } elseif ($like->getValue() === 'dislike') {
+            $manager->remove($like);
+            $topic->addLike();
+            $manager->persist($topic);
+            $manager->flush();
+            $this->like($topic, $manager, $likeStorageRepository);
         } else {
             $topic->removeLike();
-            dd('ici');
-
             $manager->persist($topic);
-            $manager->remove($like);
+            $manager->remove($likeStorageRepository->findOneBy(['userId' => $this->getUser(), 'topicId' => $topic->getId()]));
             $manager->flush();
         }
 
+        // return $this->redirectToRoute('show_topic', ['id' => $topic->getTopicId()->getId()]);
         return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
+
     }
 
     /**
      * @Route("/topic/{id}/dislike", name="dislike_topic")
      * 
+     * @Paramconverter("topic", options={"mapping": {"id" : "id"}})
+     * 
      *  @IsGranted("ROLE_USER")
      */
-    public function dislike(LikeStorage $like = NULL, Topic $topic, EntityManagerInterface $manager)
+    public function dislike(Topic $topic, EntityManagerInterface $manager, LikeStorageRepository $likeStorageRepository)
     {
+        $like = $likeStorageRepository->findOneBy(['userId' => $this->getUser(), 'topicId' => $topic->getId()]);
         if (!$like) {
             $like = New LikeStorage();
             $like->setUserId($this->getUser());
             $like->setTopicId($topic);
+            $like->setValue('dislike');
             $topic->removeLike();
             $manager->persist($topic);
             $manager->persist($like);
             $manager->flush();
+        } elseif ($like->getValue() === 'like') {
+            $manager->remove($like);
+            $topic->removeLike();
+            $manager->persist($topic);
+            $manager->flush();
+            $this->dislike($topic, $manager, $likeStorageRepository);
         } else {
             $topic->addLike();
             $manager->persist($topic);
@@ -153,7 +183,50 @@ class TopicController extends AbstractController
             $manager->flush();
         }
 
+        // return $this->redirectToRoute('show_topic', ['id' => $topic->getTopicId()->getId()]);
         return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
+
+    }
+
+    /**
+     * @Route("/topic/{id}/report", name="report_topic")
+     * 
+     * @IsGranted("ROLE_USER")
+     */
+    public function report(Topic $topic, EntityManagerInterface $manager)
+    {
+        if ($topic->getReported() != TRUE) {
+            $topic->setReported(TRUE);
+            $report = New ReportStorage;
+            $report->setUserId($this->getUser());
+            $report->setTopicId($topic);
+            $report->setCreatedAt(New \DateTime());
+            $manager->persist($report);
+            $manager->flush();
+        } else {
+            throw new \Exception('This topic was already reported');
+        }
+        
+            return $this->redirectToRoute('all_topic');
+    }
+
+        /**
+     * @Route("/topic/{id}/unreport", name="unreport_topic")
+     * 
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function unreport(Topic $topic, EntityManagerInterface $manager, ReportStorageRepository $reportStorageRepository)
+    {
+        if ($topic->getReported() === TRUE) {
+            $topic->setReported(FALSE);
+            $report = $reportStorageRepository->findOneBy(['topicId' => $topic]);
+            $manager->remove($report);
+            $manager->flush();
+        } else {
+            throw new \Exception('This topic was already reported');
+        }
+        
+            return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
     }
 
 }

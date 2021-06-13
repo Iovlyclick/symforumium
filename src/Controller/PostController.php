@@ -6,9 +6,12 @@ use App\Entity\Post;
 use App\Entity\Topic;
 use App\Form\PostType;
 use App\Entity\LikeStorage;
+use App\Entity\ReportStorage;
+use App\Repository\LikeStorageRepository;
 use App\Repository\PostRepository;
 use App\Repository\TopicRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ReportStorageRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,14 +25,14 @@ class PostController extends AbstractController
     /**
      * @Route("/post", name="all_post")
      * 
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("ROLE_ADMIN")
      */
-    public function index(PostRepository $postRepository): Response
+    public function listPost(PostRepository $postRepository): Response
     {
 
         $posts = $postRepository->findAll();
 
-        return $this->render('forum/index.html.twig', [
+        return $this->render('forum/post/list.html.twig', [
             'controller_name' => 'ForumController',
             'posts' => $posts,
         ]);
@@ -41,6 +44,8 @@ class PostController extends AbstractController
      * 
      * @Paramconverter("topic", options={"mapping": {"topic_id" : "id"}})
      * @Paramconverter("post", options={"mapping": {"post_id" : "id"}})
+     * 
+     * @IsGranted("ROLE_USER")
      */
     public function formPost(Topic $topic, Post $post = NULL, Request $request, EntityManagerInterface $manager)
     {
@@ -84,7 +89,7 @@ class PostController extends AbstractController
      * 
      * @IsGranted("ROLE_USER")
      */
-    public function showPost(Post $post, TopicRepository $topicRepository): Response
+    public function showPost(Post $post): Response
     {
 
 
@@ -107,7 +112,7 @@ class PostController extends AbstractController
         
         $posts = $postRepository->findAll();
 
-        return $this->render('forum/index.html.twig', [
+        return $this->render('forum/topic/list.html.twig', [
             'controller_name' => 'ForumController',
             'posts' => $posts,
         ]);
@@ -116,43 +121,66 @@ class PostController extends AbstractController
     /**
      * @Route("/post/{id}/like", name="like_post")
      * 
+     * @Paramconverter("post", options={"mapping": {"id" : "id"}})
+     * 
      *  @IsGranted("ROLE_USER")
      */
-    public function like(LikeStorage $like = NULL, Post $post, EntityManagerInterface $manager)
+    public function like(Post $post, EntityManagerInterface $manager, LikeStorageRepository $likeStorageRepository)
     {
+        $like = $likeStorageRepository->findOneBy(['userId' => $this->getUser(), 'postId' => $post->getId()]);
+
         if (!$like) {
             $like = New LikeStorage();
             $like->setUserId($this->getUser());
             $like->setPostId($post);
+            $like->setValue('like');
             $post->addLike();
             $manager->persist($post);
             $manager->persist($like);
             $manager->flush();
+        } elseif ($like->getValue() === 'dislike') {
+            $manager->remove($like);
+            $post->addLike();
+            $manager->persist($post);
+            $manager->flush();
+            $this->like($post, $manager, $likeStorageRepository);
         } else {
             $post->removeLike();
             $manager->persist($post);
-            $manager->remove($like);
+            $manager->remove($likeStorageRepository->findOneBy(['userId' => $this->getUser(), 'postId' => $post->getId()]));
             $manager->flush();
         }
 
+        // return $this->redirectToRoute('show_topic', ['id' => $post->getTopicId()->getId()]);
         return $this->redirectToRoute('show_post', ['id' => $post->getId()]);
+
     }
 
     /**
      * @Route("/post/{id}/dislike", name="dislike_post")
      * 
+     * @Paramconverter("post", options={"mapping": {"id" : "id"}})
+     * 
      *  @IsGranted("ROLE_USER")
      */
-    public function dislike(LikeStorage $like = NULL, Post $post, EntityManagerInterface $manager)
+    public function dislike(Post $post, EntityManagerInterface $manager, LikeStorageRepository $likeStorageRepository)
     {
+        $like = $likeStorageRepository->findOneBy(['userId' => $this->getUser(), 'postId' => $post->getId()]);
         if (!$like) {
             $like = New LikeStorage();
             $like->setUserId($this->getUser());
             $like->setPostId($post);
+            $like->setValue('dislike');
             $post->removeLike();
             $manager->persist($post);
             $manager->persist($like);
             $manager->flush();
+        } elseif ($like->getValue() === 'like') {
+            $manager->remove($like);
+            $post->removeLike();
+            $manager->persist($post);
+            $manager->flush();
+            $this->dislike($post, $manager, $likeStorageRepository);
         } else {
             $post->addLike();
             $manager->persist($post);
@@ -160,7 +188,49 @@ class PostController extends AbstractController
             $manager->flush();
         }
 
-        return $this->redirectToRoute('show_topic', ['id' => $post->getTopicId()->getId()]);
+        // return $this->redirectToRoute('show_topic', ['id' => $post->getTopicId()->getId()]);
+        return $this->redirectToRoute('show_post', ['id' => $post->getId()]);
+
+    }
+
+    /**
+     * @Route("/post/{id}/report", name="report_post")
+     * 
+     * @IsGranted("ROLE_USER")
+     */
+    public function report(Post $post, EntityManagerInterface $manager)
+    {
+        if ($post->getReported() != TRUE) {
+            $post->setReported(TRUE);
+            $report = New ReportStorage;
+            $report->setUserId($this->getUser());
+            $report->setPostId($post);
+            $report->setCreatedAt(New \DateTime());
+            $manager->persist($report);
+            $manager->flush();
+        } else {
+            throw new \Exception('This post was already reported');
+        }
+            return $this->redirectToRoute('show_topic', ['id' => $post->getTopicId()->getId()]);
+    }
+
+        /**
+     * @Route("/post/{id}/unreport", name="unreport_post")
+     * 
+     * @IsGranted("ROLE_USER")
+     */
+    public function unreport(Post $post, EntityManagerInterface $manager, ReportStorageRepository $reportStorageRepository)
+    {
+        if ($post->getReported() === TRUE) {
+            $post->setReported(FALSE);
+            $report = $reportStorageRepository->findOneBy(['postId' => $post]);
+            $manager->remove($report);
+            $manager->flush();
+        } else {
+            throw new \Exception('This post was already reported');
+        }
+        
+            return $this->redirectToRoute('show_topic', ['id' => $post->getTopicId()->getId()]);
     }
 
 }

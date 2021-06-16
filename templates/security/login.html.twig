@@ -2,8 +2,6 @@
 {% block
 title %}
 	Connexion
-
-
 {% endblock %}
 {% block body %}
 
@@ -16,9 +14,6 @@ title %}
 				</div>
 
 				<div class="col-lg-12 login-title">
-					Se connecter
-
-
 				</div>
 
 				<div class="col-lg-12 login-form">
@@ -48,10 +43,12 @@ title %}
 									</div>
 
 								{% else %}
-
+								<div class="card-title text-center mb-4">
+									<h5 class="mt-5 text-warning font-weight-bold">HELLO</h5>
+									<p class="font-weight-light">Connectez-vous pour accéder au forum</p>
+								</div>
 									<label for="email" class="form-control-label">
 										Adresse e-mail
-
 
 									</label>
 									<input id="inputEmail" type="email" class="form-control" name="email" value="{{ last_username }}" required autofocus/>
@@ -67,8 +64,8 @@ title %}
 								</div>
 								<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
 
-								<div class="col-lg-12 login-btm login-button">
-									<button type="submit" class="btn btn-outline-primary">
+								<div class="login-btm login-button">
+									<button type="submit" class="btn btn btn-outline-warning">
 										Connexion
 
 

@@ -6,19 +6,21 @@
 {% endblock %}
 
 {% block body %}
-	<h1>
-		Réponse au topic {{ topic }}
+	<h1 class="m-5">
+		Réponse au sujet {{ topic }}
 	</h1>
 
-	{{ form_start(formPost) }}
+	<div class="mx-5">
+		{{ form_start(formPost) }}
 
-	{{ form_row(formPost.content) }}
+		{{ form_row(formPost.content) }}
+	</div>
 
-	<button type="submit" class='btn btn-success'>
+	<button type="submit" class='btn btn-warning mx-5'>
 		{% if editMode %}
-			Edit
+			Éditer
 		{% else %}
-			Submit
+			Poster
 		{% endif %}
 	</button>
 	{{ form_end(formPost) }}

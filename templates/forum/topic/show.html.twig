@@ -8,27 +8,28 @@
 {% block body %}
 	<div class="d-flex container-fluid justify-content-center ">
 		<div class="card my-5 col-md-8 p-0">
-			<h5 class="card-header">Posté par
-				{{ topic.author }}<small class="float-right">
+			<h4 class="card-header bg-warning">Posté par
+				{{ topic.author }}<small class="float-right font-weight-light">
 					le
 					{{ topic.createdAt|date("d/m/Y") }}
 					à
 					{{ topic.createdAt|date("H:i") }}</small>
-			</h5>
+			</h4>
 			<div class="card-body">
 				<h5 class="card-title">{{ topic.title }}</h5>
 				<p class="card-text">{{ topic.content }}</p>
 			</div>
+				<a href="{{ path('create_post', { 'topic_id': topic.id }) }}" class="btn btn-warning">Répondre</a>
 		</div>
 	</div>
-	<a href="{{ path('create_post', { 'topic_id': topic.id }) }}" class="btn btn-primary">Répondre</a>
+	
 
 	{% if posts %}
 		{% for post in posts %}
 			<div class="d-flex container-fluid justify-content-center ">
-				<div class="card my-5 col-md-6 p-0">
-					<h5 class="card-header">Posté par
-						{{ post.author }}<small class="float-right">
+				<div class="card my-3 col-md-6 p-0">
+					<h5 class="card-header bg-secondary text-light">Réponse par
+						{{ post.author }}<small class="float-right font-weight-light">
 							le
 							{{ post.createdAt|date("d/m/Y") }}
 							à
@@ -37,11 +38,10 @@
 					<div class="card-body">
 						<p class="card-text">{{ post.content }}</p>
 					</div>
+				<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-sm btn-secondary">Commenter</a>
 				</div>
 			</div>
-			<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-primary">Commenter</a>
-
-
+			
 		{% endfor %}
 	{% endif %}
 {% endblock %}

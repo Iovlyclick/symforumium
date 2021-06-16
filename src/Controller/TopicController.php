@@ -9,6 +9,7 @@ use App\Entity\ReportStorage;
 use App\Repository\TopicRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\LikeStorageRepository;
+use App\Repository\PostRepository;
 use App\Repository\ReportStorageRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -79,13 +80,15 @@ class TopicController extends AbstractController
      * 
      * @IsGranted("ROLE_USER")
      */
-    public function showTopic(Topic $topic): Response
+    public function showTopic(Topic $topic, PostRepository $postRepository): Response
     {
+        $posts = $postRepository->findBy(['topicId' => $topic->getId(), 'reported' => NULL]);
 
 
         return $this->render('forum/topic/show.html.twig', [
             'controller_name' => 'TopicController',
             'topic' => $topic,
+            'posts' => $posts,
         ]);
     }
 

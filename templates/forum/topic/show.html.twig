@@ -1,19 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ topic.title }} | SlackOverflow{% endblock %}
+{% block title %}
+	{{ topic.title }}
+	| SlackOverflow
+{% endblock %}
 
 {% block body %}
-	<h3>
-		{{ topic.title }}
-	</h3>
-	<p>
-		{{ topic.author }}<br>
-		{{ topic.content}}
-	</p>
-	{# {% for post in posts %}
-	<p>
-		{{ post.author }} answered<br>
-		{{ post.content}} the {{ post.createdAt | date("m/d/Y")}} at {{ post.createdAt | date("H:i:s")}}
-	</p>
-	{% endfor %} #}
+	<div class="d-flex container-fluid justify-content-center ">
+		<div class="card my-5 col-md-8 p-0">
+			<h5 class="card-header">Posté par
+				{{ topic.author }}<small class="float-right">
+					le
+					{{ topic.createdAt|date("d/m/Y") }}
+					à
+					{{ topic.createdAt|date("H:i") }}</small>
+			</h5>
+			<div class="card-body">
+				<h5 class="card-title">{{ topic.title }}</h5>
+				<p class="card-text">{{ topic.content }}</p>
+			</div>
+		</div>
+	</div>
+	<a href="{{ path('create_post', { 'topic_id': topic.id }) }}" class="btn btn-primary">Répondre</a>
+
+	{% if posts %}
+		{% for post in posts %}
+			<div class="d-flex container-fluid justify-content-center ">
+				<div class="card my-5 col-md-6 p-0">
+					<h5 class="card-header">Posté par
+						{{ post.author }}<small class="float-right">
+							le
+							{{ post.createdAt|date("d/m/Y") }}
+							à
+							{{ post.createdAt|date("H:i") }}</small>
+					</h5>
+					<div class="card-body">
+						<p class="card-text">{{ post.content }}</p>
+					</div>
+				</div>
+			</div>
+			<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-primary">Commenter</a>
+
+
+		{% endfor %}
+	{% endif %}
 {% endblock %}

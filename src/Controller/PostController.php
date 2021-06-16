@@ -39,8 +39,8 @@ class PostController extends AbstractController
     }
 
     /**
-     * @Route("/topic/{topic_id}/post/new", name="post_create")
-     * @Route("/topic/{topic_id}/post/{post_id}/edit", name="post_edit")
+     * @Route("/topic/{topic_id}/post/new", name="create_post")
+     * @Route("/topic/{topic_id}/post/{post_id}/edit", name="edit_post")
      * 
      * @Paramconverter("topic", options={"mapping": {"topic_id" : "id"}})
      * @Paramconverter("post", options={"mapping": {"post_id" : "id"}})

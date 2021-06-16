@@ -39,8 +39,8 @@ class CommentController extends AbstractController
     }
 
     /**
-     * @Route("/post/{post_id}/comment/new", name="comment_create")
-     * @Route("/post/{post_id}/comment/{comment_id}/edit", name="comment_edit")
+     * @Route("/post/{post_id}/comment/new", name="create_comment")
+     * @Route("/post/{post_id}/comment/{comment_id}/edit", name="edit_comment")
      * 
      * @Paramconverter("post", options={"mapping": {"post_id" : "id"}})
      * @Paramconverter("comment", options={"mapping": {"comment_id" : "id"}})

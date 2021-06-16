@@ -74,7 +74,7 @@ class PostController extends AbstractController
             $manager->persist($post);
             $manager->flush();
 
-            return $this->redirectToRoute('show_post', ['id' => $post->getId()]);
+            return $this->redirectToRoute('show_topic', ['id' => $post->getTopicId()->getId()]);
         }
         return $this->render('forum/post/create.html.twig', [
             'formPost' => $form->createView(),

@@ -7,7 +7,7 @@
 
 {% block body %}
 	<div class="d-flex container-fluid justify-content-center ">
-		<div class="card my-5 col-md-8 p-0">
+		<div class="card mt-5 mb-0 col-md-8 p-0">
 			<h5 class="card-header">Posté par
 				{{ topic.author }}<small class="float-right">
 					le
@@ -18,17 +18,19 @@
 			<div class="card-body">
 				<h5 class="card-title">{{ topic.title }}</h5>
 				<p class="card-text">{{ topic.content }}</p>
+				<a href="{{ path('create_post', { 'topic_id': topic.id }) }}" class="btn btn-primary float-right">Répondre</a>
 			</div>
 		</div>
 	</div>
-	<a href="{{ path('create_post', { 'topic_id': topic.id }) }}" class="btn btn-primary">Répondre</a>
 
 	{% if posts %}
 		{% for post in posts %}
 			<div class="d-flex container-fluid justify-content-center ">
-				<div class="card my-5 col-md-6 p-0">
-					<h5 class="card-header">Posté par
-						{{ post.author }}<small class="float-right">
+				<div class="card my-0 col-md-8 p-0">
+					<h5 class="my-1 mx-3">
+						{{ post.author }}
+						a répondu
+						<small class="float-right">
 							le
 							{{ post.createdAt|date("d/m/Y") }}
 							à
@@ -36,10 +38,32 @@
 					</h5>
 					<div class="card-body">
 						<p class="card-text">{{ post.content }}</p>
+						<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-primary float-right">Commenter</a>
 					</div>
 				</div>
 			</div>
-			<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-primary">Commenter</a>
+
+			{% if comments[post.id] %}
+				{% for  comment in  comments[post.id]%}
+
+					<div class="d-flex container-fluid justify-content-center px-5">
+						<div class="card my-0 col-md-8 p-0">
+							<h6 class="my-1 mx-3">
+								{{ comment.author }}
+								a commenté
+								<small class="float-right">
+									le
+									{{ comment.createdAt|date("d/m/Y") }}
+									à
+									{{ comment.createdAt|date("H:i") }}</small>
+							</h5>
+							<div class="card-body">
+								<p class="card-text">{{ comment.content }}</p>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			{% endif %}
 
 
 		{% endfor %}

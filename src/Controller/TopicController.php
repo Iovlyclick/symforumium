@@ -6,6 +6,7 @@ use App\Entity\Topic;
 use App\Form\TopicType;
 use App\Entity\LikeStorage;
 use App\Entity\ReportStorage;
+use App\Repository\CommentRepository;
 use App\Repository\TopicRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\LikeStorageRepository;
@@ -80,15 +81,24 @@ class TopicController extends AbstractController
      * 
      * @IsGranted("ROLE_USER")
      */
-    public function showTopic(Topic $topic, PostRepository $postRepository): Response
+    public function showTopic(Topic $topic, PostRepository $postRepository, CommentRepository $commentRepository): Response
     {
-        $posts = $postRepository->findBy(['topicId' => $topic->getId(), 'reported' => NULL]);
+        $posts = $postRepository->findBy(['topicId' => $topic->getId(), 'reported' => NULL], ['likeAmount' =>'DESC']);
 
+        $comments = [];
+        foreach ($posts as $post) {
+            $comments[$post->getId()] = $commentRepository->findBy(['postId' => $post->getId()], ['likeAmount' => 'DESC']);
+        }
+
+        // if (in_array($post)) {
+        //     # code...
+        // }
 
         return $this->render('forum/topic/show.html.twig', [
             'controller_name' => 'TopicController',
             'topic' => $topic,
             'posts' => $posts,
+            'comments' => $comments,
         ]);
     }
 

@@ -54,11 +54,11 @@ class TopicController extends AbstractController
             }
         }
 
-        $form = $this->createForm(TopicType::class, $topic); 
+        $form = $this->createForm(TopicType::class, $topic);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid() ) {
+        if ($form->isSubmitted() && $form->isValid()) {
             if (!$topic->getId()) {
                 $topic->setAuthor($this->getUser());
                 $current_date = new \DateTime();
@@ -73,19 +73,19 @@ class TopicController extends AbstractController
         }
         return $this->render('/forum/topic/create.html.twig', [
             'formTopic' => $form->createView(),
-            'editMode' => $topic->getId()!== NULL,
+            'editMode' => $topic->getId() !== NULL,
         ]);
     }
 
-    
-        /**
+
+    /**
      * @Route("/topic/{id}", name="show_topic")
      * 
      * @IsGranted("ROLE_USER")
      */
     public function showTopic(Topic $topic, PostRepository $postRepository, CommentRepository $commentRepository): Response
     {
-        $posts = $postRepository->findBy(['topicId' => $topic->getId(), 'reported' => NULL, 'archived' => NULL], ['likeAmount' =>'DESC']);
+        $posts = $postRepository->findBy(['topicId' => $topic->getId(), 'reported' => NULL, 'archived' => NULL], ['likeAmount' => 'DESC']);
 
         $comments = [];
         foreach ($posts as $post) {
@@ -108,15 +108,16 @@ class TopicController extends AbstractController
      */
     public function deleteTopic(Topic $topic, EntityManagerInterface $manager, TopicRepository $topicRepository): Response
     {
-        if ($topic->getLikeAmount() !== 0 || $topic->getReported() === TRUE || strtotime($topic->getCreatedAt()->format('Y-m-d H:i:s')) < strtotime('-30 minutes')) {
+        if (!in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+            if ($topic->getLikeAmount() !== 0 || $topic->getReported() === TRUE || strtotime($topic->getCreatedAt()->format('Y-m-d H:i:s')) < strtotime('-30 minutes')) {
 
-            return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
+                return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
+            }
         }
-
         $topic->setArchived(TRUE);
         $manager->persist($topic);
         $manager->flush();
-        
+
         return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
     }
 
@@ -132,7 +133,7 @@ class TopicController extends AbstractController
         $like = $likeStorageRepository->findOneBy(['userId' => $this->getUser(), 'topicId' => $topic->getId()]);
 
         if (!$like) {
-            $like = New LikeStorage();
+            $like = new LikeStorage();
             $like->setUserId($this->getUser());
             $like->setTopicId($topic);
             $like->setValue('like');
@@ -154,7 +155,6 @@ class TopicController extends AbstractController
         }
 
         return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
-
     }
 
     /**
@@ -168,7 +168,7 @@ class TopicController extends AbstractController
     {
         $like = $likeStorageRepository->findOneBy(['userId' => $this->getUser(), 'topicId' => $topic->getId()]);
         if (!$like) {
-            $like = New LikeStorage();
+            $like = new LikeStorage();
             $like->setUserId($this->getUser());
             $like->setTopicId($topic);
             $like->setValue('dislike');
@@ -190,7 +190,6 @@ class TopicController extends AbstractController
         }
 
         return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
-
     }
 
     /**
@@ -202,17 +201,17 @@ class TopicController extends AbstractController
     {
         if ($topic->getReported() != TRUE) {
             $topic->setReported(TRUE);
-            $report = New ReportStorage;
+            $report = new ReportStorage;
             $report->setUserId($this->getUser());
             $report->setTopicId($topic);
-            $report->setCreatedAt(New \DateTime());
+            $report->setCreatedAt(new \DateTime());
             $manager->persist($report);
             $manager->flush();
         } else {
             throw new \Exception('This topic was already reported');
         }
-        
-            return $this->redirectToRoute('all_topic');
+
+        return $this->redirectToRoute('all_topic');
     }
 
     /**
@@ -230,11 +229,11 @@ class TopicController extends AbstractController
         } else {
             throw new \Exception('This topic was already reported');
         }
-        
-            return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
+
+        return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
     }
 
-        /**
+    /**
      * @Route("/admin", name="admin")
      * 
      * @IsGranted("ROLE_ADMIN")
@@ -252,7 +251,5 @@ class TopicController extends AbstractController
             'posts' => $posts,
             'comments' => $comments,
         ]);
-    
     }
-
 }

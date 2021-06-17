@@ -39,14 +39,6 @@
 					<div class="card-body">
 						<p class="card-text">{{ post.content }}</p>
 
-						<h5 class="float left">Score :
-							{{ post.likeAmount }}
-						</h5>
-
-					<a href="{{ path('dislike_post', { 'id': post.id }) }}" class="text-dark bi bi-caret-up-fill float-left"></a>
-						
-					<a href="{{ path('dislike_post', { 'id': post.id }) }}" class="text-dark bi bi-caret-down-fill float-left"></a>
-
 					<div class="btn-group float-right" role="group">
 						<a href="{{ path('report_post', { 'id': post.id }) }}" class="btn btn-secondary">Report</a>
 					{% if post.author == app.user %}

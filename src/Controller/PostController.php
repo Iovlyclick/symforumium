@@ -9,7 +9,6 @@ use App\Entity\LikeStorage;
 use App\Entity\ReportStorage;
 use App\Repository\LikeStorageRepository;
 use App\Repository\PostRepository;
-use App\Repository\TopicRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ReportStorageRepository;
 use Symfony\Component\HttpFoundation\Request;

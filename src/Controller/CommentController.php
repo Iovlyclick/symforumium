@@ -8,7 +8,6 @@ use App\Form\CommentType;
 use App\Entity\LikeStorage;
 use App\Entity\ReportStorage;
 use App\Repository\PostRepository;
-use App\Repository\TopicRepository;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\LikeStorageRepository;
@@ -83,22 +82,19 @@ class CommentController extends AbstractController
         ]);
     }
 
-    
-        /**
+    /**
      * @Route("/comment/{id}", name="show_comment")
      * 
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("ROLE_ADMIN")
      */
-    public function showComment(Comment $comment, PostRepository $postRepository): Response
+    public function showComment(Comment $comment): Response
     {
-
 
         return $this->render('forum/comment/show.html.twig', [
             'controller_name' => 'ForumController',
             'comment' => $comment,
         ]);
     }
-
 
     /**
      * @Route("/comment/{id}/delete", name="delete_comment")

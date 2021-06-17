@@ -21,12 +21,19 @@
 				<h6>Score =
 					{{ topic.likeAmount }}
 				</h6>
+				{% set toto = FALSE %}
+
 				{% for role in app.user.roles %}
-					{% if app.user.roles == 'ROLE_ADMIN' %}
+					{% if role == 'ROLE_ADMIN' %}
 						<a href="{{ path('edit_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Editer</a>
 						<a href="{{ path('delete_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+						{% set toto = TRUE %}
 					{% endif %}
 				{% endfor %}
+				{% if toto == FALSE and topic.author == app.user and date(topic.createdAt) > date('-30minutes') and topic.likeAmount == 0 %}
+						<a href="{{ path('edit_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Editer</a>
+						<a href="{{ path('delete_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+				{% endif %}
 				<a href="{{ path('create_post', { 'topic_id': topic.id }) }}" class="btn btn-primary float-right">Répondre</a>
 				<a href="{{ path('dislike_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Downvote</a>
 				<a href="{{ path('like_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Upvote</a>
@@ -54,8 +61,21 @@
 						<h6>Score =
 							{{ post.likeAmount }}
 						</h6>
+						{% set tata = FALSE %}
 
-						{% if post.author == app.user %}
+						{% for role in app.user.roles %}
+							{% if role == 'ROLE_ADMIN' %}
+							<a href="{{ path('edit_post', { 'post_id': post.id, 'topic_id': topic.id}) }}" class="btn btn-primary float-left">Editer</a>
+							{% if comments[post.id] == NULL %}
+
+								<a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+							{% endif %}
+
+								{% set tata = TRUE %}
+							{% endif %}
+						{% endfor %}
+
+						{% if post.author == app.user and tata == FALSE %}
 							<a href="{{ path('edit_post', { 'post_id': post.id, 'topic_id': topic.id}) }}" class="btn btn-primary float-left">Editer</a>
 							{% if comments[post.id] == NULL %}
 								<a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-primary float-left">Supprimer</a>
@@ -90,6 +110,21 @@
 								<h6>Score =
 									{{ comment.likeAmount }}
 								</h6>
+
+						{% set titi = FALSE %}
+
+						{% for role in app.user.roles %}
+							{% if role == 'ROLE_ADMIN' %}
+									<a href="{{ path('edit_comment', { 'comment_id': comment.id, 'post_id': post.id}) }}" class="btn btn-primary float-left">Editer</a>
+
+							{% if comments[post.id] == NULL %}
+									<a href="{{ path('delete_comment', { 'id': comment.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+
+							{% endif %}
+
+								{% set titi = TRUE %}
+							{% endif %}
+						{% endfor %}
 
 								{% if comment.author == app.user %}
 									<a href="{{ path('edit_comment', { 'comment_id': comment.id, 'post_id': post.id}) }}" class="btn btn-primary float-left">Editer</a>

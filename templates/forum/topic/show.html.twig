@@ -21,10 +21,12 @@
 				<h6>Score =
 					{{ topic.likeAmount }}
 				</h6>
-				{% if app.user.roles[1] == 'ROLE_ADMIN' or topic.author == app.user and date(topic.createdAt) > date('-30minutes') and topic.likeAmount == 0 %}
-					<a href="{{ path('edit_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Editer</a>
-					<a href="{{ path('delete_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Supprimer</a>
-				{% endif %}
+				{% for role in app.user.roles %}
+					{% if app.user.roles == 'ROLE_ADMIN' or topic.author == app.user and date(topic.createdAt) > date('-30minutes') and topic.likeAmount == 0 %}
+						<a href="{{ path('edit_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Editer</a>
+						<a href="{{ path('delete_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+					{% endif %}
+				{% endfor %}
 				<a href="{{ path('create_post', { 'topic_id': topic.id }) }}" class="btn btn-primary float-right">Répondre</a>
 				<a href="{{ path('dislike_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Downvote</a>
 				<a href="{{ path('like_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Upvote</a>

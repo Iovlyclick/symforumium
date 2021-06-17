@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% block
 title %}
-	Connexion
+	Connexion | Slackoverflow
 {% endblock %}
 {% block body %}
 
@@ -27,19 +27,15 @@ title %}
 									</div>
 								{% elseif app.user %}
 
-									<div class="mb-3">
-										Bonjour
-
-
+								<div class="mx-auto pt-5" style="width: 50%;">
+										Hello
 										{{ app.user.username }}
-										,
 
+										<br>
 
-										<a href="{{ path('app_logout') }}">
-											Se déconnecter
-
-
-										</a>
+											<a type="button" class="btn btn-info mt-4" href="{{ path('app_logout') }}">
+												Se déconnecter
+											</a>
 									</div>
 
 								{% else %}

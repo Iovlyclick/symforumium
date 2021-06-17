@@ -2,23 +2,24 @@
 
 {% form_theme formComment 'bootstrap_4_layout.html.twig' %}
 
-{% block title %}Welcome to SlackOverflow
+{% block title %}Poster un commentaire
 {% endblock %}
 
 {% block body %}
-	<h1>
-		Commentaire au post {{ post }}
+<div class="mx-auto" style="width: 50%;">
+	<h1 class="pt-5">
+		Commentaire à la réponse {{ post }}
 	</h1>
 
 	{{ form_start(formComment) }}
 
 	{{ form_row(formComment.content) }}
 
-	<button type="submit" class='btn btn-success'>
+	<button type="submit" class='btn btn-secondary'>
 		{% if editMode %}
-			Edit
+			Éditer
 		{% else %}
-			Submit
+			Valider
 		{% endif %}
 	</button>
 	{{ form_end(formComment) }}

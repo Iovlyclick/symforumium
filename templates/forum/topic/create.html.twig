@@ -2,12 +2,13 @@
 
 {% form_theme formTopic 'bootstrap_4_layout.html.twig' %}
 
-{% block title %}Welcome to SlackOverflow
+{% block title %}Créer un sujet 
 {% endblock %}
 
 {% block body %}
-	<h1>
-		Création d'un topic !
+<div class="mx-auto" style="width: 50%;">
+	<h1 class="pt-5">
+		Création d'un sujet
 	</h1>
 
 	{{ form_start(formTopic) }}
@@ -15,11 +16,11 @@
 	{{ form_row(formTopic.title) }}
 	{{ form_row(formTopic.content) }}
 
-	<button type="submit" class='btn btn-success'>
+	<button type="submit" class='btn btn-warning'>
 		{% if editMode %}
-			Edit
+			Éditer
 		{% else %}
-			Submit
+			Valider
 		{% endif %}
 	</button>
 	{{ form_end(formTopic) }}

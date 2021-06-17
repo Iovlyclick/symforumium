@@ -38,10 +38,33 @@
 					<div class="card-body">
 						<p class="card-text">{{ post.content }}</p>
 					</div>
-				<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-sm btn-secondary">Commenter</a>
-				</div>
-			</div>
-			
+				
+
+			{% if comments[post.id] %}
+				{% for  comment in  comments[post.id]%}
+
+					<div class="d-flex container-fluid justify-content-center">
+						<div class="card my-0 col-md-12 p-0">
+							<h6 class="my-1 mx-3">
+								{{ comment.author }}
+								a commenté
+								<small class="float-right">
+									le
+									{{ comment.createdAt|date("d/m/Y") }}
+									à
+									{{ comment.createdAt|date("H:i") }}</small>
+								</h6>
+							<div class="card-body">
+								<p class="card-text">{{ comment.content }}</p>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			{% endif %}
+							<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-sm btn-secondary">Commenter</a>
+						</div>
+					</div>
+
 		{% endfor %}
 	{% endif %}
 {% endblock %}

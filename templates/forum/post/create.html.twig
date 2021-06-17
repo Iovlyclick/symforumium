@@ -2,21 +2,22 @@
 
 {% form_theme formPost 'bootstrap_4_layout.html.twig' %}
 
-{% block title %}Welcome to SlackOverflow
+{% block title %}Répondre au sujet
 {% endblock %}
 
 {% block body %}
-	<h1 class="m-5">
+<div class="mx-auto" style="width: 50%;">
+	<h1 class="pt-5">
 		Réponse au sujet {{ topic }}
 	</h1>
 
-	<div class="mx-5">
+	<div>
 		{{ form_start(formPost) }}
 
 		{{ form_row(formPost.content) }}
 	</div>
 
-	<button type="submit" class='btn btn-warning mx-5'>
+	<button type="submit" class='btn btn-warning'>
 		{% if editMode %}
 			Éditer
 		{% else %}
@@ -24,4 +25,5 @@
 		{% endif %}
 	</button>
 	{{ form_end(formPost) }}
+</div>
 {% endblock %}

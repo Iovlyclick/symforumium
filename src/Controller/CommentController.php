@@ -45,7 +45,7 @@ class CommentController extends AbstractController
      * @Paramconverter("post", options={"mapping": {"post_id" : "id"}})
      * @Paramconverter("comment", options={"mapping": {"comment_id" : "id"}})
      */
-    public function formComment(Post $post, Comment $comment = NULL, Request $request, EntityManagerInterface $manager)
+    public function formComment(Post $post, Comment $comment = NULL, Request $request, EntityManagerInterface $manager, PostRepository $postRepository)
     {
         
         if (!$comment) {
@@ -72,7 +72,9 @@ class CommentController extends AbstractController
             $manager->persist($comment);
             $manager->flush();
 
-            return $this->redirectToRoute('show_comment', ['id' => $comment->getId()]);
+            $topicId = $postRepository->find($comment->getPostId())->getTopicId()->getId();
+
+            return $this->redirectToRoute('show_topic', ['id' => $comment->getPostId()->getTopicId()->getId()]);
         }
         return $this->render('forum/comment/create.html.twig', [
             'formComment' => $form->createView(),

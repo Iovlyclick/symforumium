@@ -22,10 +22,8 @@
 
 						{% if post.author == app.user %}
 							<a href="{{ path('edit_post', { 'post_id': post.id, 'topic_id': post.topicId.getId}) }}" class="btn btn-primary float-left">Editer</a>
-							{% if comments[post.id] == NULL %}
-								<a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+							<a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-primary float-left">Supprimer</a>
 
-							{% endif %}
 						{% endif %}
 
 						<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-primary float-right">Commenter</a>

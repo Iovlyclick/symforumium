@@ -47,9 +47,11 @@ class TopicController extends AbstractController
     {
         if (!$topic) {
             $topic = new Topic();
-        } elseif ($topic->getLikeAmount() !== 0 || $topic->getReported() === TRUE || strtotime($topic->getCreatedAt()->format('Y-m-d H:i:s')) < strtotime('-30 minutes')) {
+        } elseif (!in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
 
-            return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
+            if ($topic->getLikeAmount() !== 0 || $topic->getReported() === TRUE || strtotime($topic->getCreatedAt()->format('Y-m-d H:i:s')) < strtotime('-30 minutes')) {
+                return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
+            }
         }
 
         $form = $this->createForm(TopicType::class, $topic); 

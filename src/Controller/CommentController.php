@@ -105,13 +105,12 @@ class CommentController extends AbstractController
      * 
      *  @IsGranted("ROLE_USER")
      */
-    public function deleteComment(Comment $comment, EntityManagerInterface $manager, TopicRepository $topicRepository): Response
+    public function deleteComment(Comment $comment, EntityManagerInterface $manager): Response
     {
-        $manager->remove($comment);
+        $comment->setArchived(TRUE);
+        $manager->persist($comment);
         $manager->flush();
         
-        $topics = $topicRepository->findAll();
-
         return $this->redirectToRoute('show_topic', ['id' => $comment->getPostId()->getTopicId()->getId()]);
     }
 

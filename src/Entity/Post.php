@@ -71,6 +71,11 @@ class Post
      */
     private $lastEditedAt;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $archived;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -268,6 +273,18 @@ class Post
     public function setLastEditedAt(\DateTimeInterface $lastEditedAt): self
     {
         $this->lastEditedAt = $lastEditedAt;
+
+        return $this;
+    }
+
+    public function getArchived(): ?bool
+    {
+        return $this->archived;
+    }
+
+    public function setArchived(?bool $archived): self
+    {
+        $this->archived = $archived;
 
         return $this;
     }

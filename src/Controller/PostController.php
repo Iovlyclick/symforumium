@@ -107,7 +107,8 @@ class PostController extends AbstractController
      */
     public function deletePost(Post $post, EntityManagerInterface $manager, PostRepository $postRepository): Response
     {
-        $manager->remove($post);
+        $post->setArchived(TRUE);
+        $manager->persist($post);
         $manager->flush();
         
         $posts = $postRepository->findAll();

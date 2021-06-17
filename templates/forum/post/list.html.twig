@@ -6,8 +6,24 @@
 {% endblock %}
 
 {% block body %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<a class="navbar-brand" href="{{ path('admin') }}">Admin panel</a>
+
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+	<ul class="navbar-nav mr-auto">
+	<li class="nav-item">
+		<a class="nav-link" href="{{ path('all_post') }}">Tous les posts</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" href="{{ path('all_comment') }}">Tous les commentaires</a>
+	</li>
+	</ul>
+</div>
+</nav>
+
 	{% if posts %}
-    <h3 class="text-center">Liste des Posts</h3>
+    <h3 class="text-center pt-5">Liste des derniers posts</h3>
 		{% for post in posts %}
 			<div class="d-flex container-fluid justify-content-center my-3">
 				<div class="card my-0 col-md-8 p-0">
@@ -22,22 +38,25 @@
 					</h5>
 					<div class="card-body">
 						<p class="card-text">{{ post.content }}</p>
-						<h6>Score =
+
+						<h5 class="float left">Score :
 							{{ post.likeAmount }}
-						</h6>
+						</h5>
 
-						{% if post.author == app.user %}
-							<a href="{{ path('edit_post', { 'post_id': post.id, 'topic_id': post.topicId.getId()}) }}" class="btn btn-primary float-left">Editer</a>
-								<a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-primary float-left">Supprimer</a>
-						{% endif %}
+					<a href="{{ path('dislike_post', { 'id': post.id }) }}" class="text-dark bi bi-caret-up-fill float-left"></a>
+						
+					<a href="{{ path('dislike_post', { 'id': post.id }) }}" class="text-dark bi bi-caret-down-fill float-left"></a>
 
-						<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-primary float-right">Commenter</a>
-						<a href="{{ path('dislike_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Downvote</a>
-						<a href="{{ path('like_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Upvote</a>
-						<a href="{{ path('report_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Report</a>
+					<div class="btn-group float-right" role="group">
+						<a href="{{ path('report_post', { 'id': post.id }) }}" class="btn btn-secondary">Report</a>
+					{% if post.author == app.user %}
+						<a href="{{ path('edit_post', { 'post_id': post.id, 'topic_id': post.topicId.getId()}) }}" class="btn btn-secondary">Editer</a>
+						<a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-secondary">Supprimer</a>
+					{% endif %}
 					</div>
 				</div>
 			</div>
+		</div>
 		{% endfor %}
 	{% endif %}
 {% endblock %}

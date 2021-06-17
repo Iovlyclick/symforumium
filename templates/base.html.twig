@@ -26,12 +26,16 @@
 							<a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
 						</li>
 						
-						{% if app.user.roles[1] == 'ROLE_ADMIN' %}
+					{% for role in app.user.roles %}
+						
+						{% if role == 'ROLE_ADMIN' %}
 							<li>
-								<a class="nav-link" href="{{ path('admin') }}">Admin Panel</a>
+								<a class="nav-link text-warning" href="{{ path('admin') }}">Admin Panel</a>
 							</li>
 
 						{% endif %}
+					{% endfor %}
+
 
 					{% else %}
 

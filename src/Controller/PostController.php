@@ -221,7 +221,7 @@ class PostController extends AbstractController
     public function unreport(Post $post, EntityManagerInterface $manager, ReportStorageRepository $reportStorageRepository)
     {
         if ($post->getReported() === TRUE) {
-            $post->setReported(FALSE);
+            $post->setReported(NULL);
             $report = $reportStorageRepository->findOneBy(['postId' => $post]);
             $manager->remove($report);
             $manager->flush();

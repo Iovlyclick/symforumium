@@ -211,7 +211,7 @@ class CommentController extends AbstractController
     public function unreport(Comment $comment, EntityManagerInterface $manager, ReportStorageRepository $reportStorageRepository)
     {
         if ($comment->getReported() === TRUE) {
-            $comment->setReported(FALSE);
+            $comment->setReported(NULL);
             $report = $reportStorageRepository->findOneBy(['commentId' => $comment]);
             $manager->remove($report);
             $manager->flush();

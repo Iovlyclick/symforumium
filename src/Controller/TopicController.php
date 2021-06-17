@@ -221,7 +221,7 @@ class TopicController extends AbstractController
     public function unreport(Topic $topic, EntityManagerInterface $manager, ReportStorageRepository $reportStorageRepository)
     {
         if ($topic->getReported() === TRUE) {
-            $topic->setReported(FALSE);
+            $topic->setReported(NULL);
             $report = $reportStorageRepository->findOneBy(['topicId' => $topic]);
             $manager->remove($report);
             $manager->flush();

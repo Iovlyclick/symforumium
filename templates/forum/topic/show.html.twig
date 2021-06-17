@@ -100,9 +100,7 @@
                         {% endfor %}
 
                         {% if post.author == app.user and tata == FALSE %}
-                            <a href="{{ path('edit_post', { 'post_id': post.id, 'topic_id': topic.id}) }}" class="btn btn-primary float-left">
-                                Editer
-                            </a>
+                            <a href="{{ path('edit_post', { 'post_id': post.id, 'topic_id': topic.id}) }}" class="btn float-right bi bi-pencil-square"></a>
                             {% if comments[post.id] == NULL %}
                                 <a href="{{ path('delete_post', { 'id': post.id }) }}" class="m-2 bi bi-trash float-right text-danger"></a>
 

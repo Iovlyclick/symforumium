@@ -22,7 +22,7 @@
 </div>
 </nav>
 
-	{% if posts %}
+	{% if posts is defined %}
     <h3 class="text-center pt-5">Liste des derniers posts</h3>
 		{% for post in posts %}
 			<div class="d-flex container-fluid justify-content-center my-3">

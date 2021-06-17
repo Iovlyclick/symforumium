@@ -7,14 +7,14 @@
 
 {% block body %}
 	<div class="d-flex container-fluid justify-content-center ">
-		<div class="card mt-5 mb-0 col-md-8 p-0">
-			<h5 class="card-header">Posté par
-				{{ topic.author }}<small class="float-right">
+		<div class="card my-5 col-md-8 p-0">
+			<h4 class="card-header bg-warning">Posté par
+				{{ topic.author }}<small class="float-right font-weight-light">
 					le
 					{{ topic.createdAt|date("d/m/Y") }}
 					à
 					{{ topic.createdAt|date("H:i") }}</small>
-			</h5>
+			</h4>
 			<div class="card-body">
 				<h5 class="card-title">{{ topic.title }}</h5>
 				<p class="card-text">{{ topic.content }}</p>
@@ -25,23 +25,22 @@
 					<a href="{{ path('edit_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Editer</a>
 					<a href="{{ path('delete_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Supprimer</a>
 				{% endif %}
-				<a href="{{ path('create_post', { 'topic_id': topic.id }) }}" class="btn btn-primary float-right">Répondre</a>
-				<a href="{{ path('dislike_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Downvote</a>
-				<a href="{{ path('like_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Upvote</a>
+				<a href="{{ path('dislike_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right bi bi-caret-down-fill">Downvote</a>
+				<a href="{{ path('like_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right bi bi-caret-up-fill"></a>
 				<a href="{{ path('report_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Report</a>
 
 			</div>
+				<a href="{{ path('create_post', { 'topic_id': topic.id }) }}" class="btn btn-warning">Répondre</a>
 		</div>
 	</div>
+	
 
 	{% if posts %}
 		{% for post in posts %}
 			<div class="d-flex container-fluid justify-content-center ">
-				<div class="card my-0 col-md-8 p-0">
-					<h5 class="my-1 mx-3">
-						{{ post.author }}
-						a répondu
-						<small class="float-right">
+				<div class="card my-3 col-md-6 p-0">
+					<h5 class="card-header bg-secondary text-light">Réponse par
+						{{ post.author }}<small class="float-right font-weight-light">
 							le
 							{{ post.createdAt|date("d/m/Y") }}
 							à
@@ -61,19 +60,17 @@
 							{% endif %}
 						{% endif %}
 
-						<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-primary float-right">Commenter</a>
 						<a href="{{ path('dislike_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Downvote</a>
 						<a href="{{ path('like_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Upvote</a>
 						<a href="{{ path('report_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Report</a>
 					</div>
-				</div>
-			</div>
+				
 
 			{% if comments[post.id] %}
 				{% for  comment in  comments[post.id]%}
 
-					<div class="d-flex container-fluid justify-content-center px-5">
-						<div class="card my-0 col-md-8 p-0">
+					<div class="d-flex container-fluid justify-content-center">
+						<div class="card my-0 col-md-12 p-0">
 							<h6 class="my-1 mx-3">
 								{{ comment.author }}
 								a commenté
@@ -82,7 +79,7 @@
 									{{ comment.createdAt|date("d/m/Y") }}
 									à
 									{{ comment.createdAt|date("H:i") }}</small>
-							</h5>
+								</h6>
 							<div class="card-body">
 								<p class="card-text">{{ comment.content }}</p>
 								<h6>Score =
@@ -104,7 +101,9 @@
 					</div>
 				{% endfor %}
 			{% endif %}
-
+							<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-sm btn-secondary">Commenter</a>
+						</div>
+					</div>
 
 		{% endfor %}
 	{% endif %}

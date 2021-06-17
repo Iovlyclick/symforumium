@@ -22,7 +22,7 @@
 					{{ topic.likeAmount }}
 				</h6>
 				{% for role in app.user.roles %}
-					{% if app.user.roles == 'ROLE_ADMIN' or topic.author == app.user and date(topic.createdAt) > date('-30minutes') and topic.likeAmount == 0 %}
+					{% if app.user.roles == 'ROLE_ADMIN' %}
 						<a href="{{ path('edit_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Editer</a>
 						<a href="{{ path('delete_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Supprimer</a>
 					{% endif %}

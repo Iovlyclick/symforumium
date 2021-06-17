@@ -31,7 +31,7 @@ class CommentController extends AbstractController
 
         $comments = $commentRepository->findAll();
 
-        return $this->render('forum/comment/index.html.twig', [
+        return $this->render('forum/comment/list.html.twig', [
             'controller_name' => 'ForumController',
             'comments' => $comments,
         ]);

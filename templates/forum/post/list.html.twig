@@ -1,20 +1,43 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello PostController!{% endblock %}
+{% block title %}
+	Post List
+	| SlackOverflow
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+	{% if posts %}
+    <h3 class="text-center">Liste des Posts</h3>
+		{% for post in posts %}
+			<div class="d-flex container-fluid justify-content-center my-3">
+				<div class="card my-0 col-md-8 p-0">
+					<h5 class="my-1 mx-3">
+						{{ post.author }}
+						a répondu
+						<small class="float-right">
+							le
+							{{ post.createdAt|date("d/m/Y") }}
+							à
+							{{ post.createdAt|date("H:i") }}</small>
+					</h5>
+					<div class="card-body">
+						<p class="card-text">{{ post.content }}</p>
+						<h6>Score =
+							{{ post.likeAmount }}
+						</h6>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+						{% if post.author == app.user %}
+							<a href="{{ path('edit_post', { 'post_id': post.id, 'topic_id': post.topicId.getId()}) }}" class="btn btn-primary float-left">Editer</a>
+								<a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+						{% endif %}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Projets/FAC/symforumium/src/Controller/PostController.php'|file_link(0) }}">src/Controller/PostController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Projets/FAC/symforumium/templates/post/index.html.twig'|file_link(0) }}">templates/post/index.html.twig</a></code></li>
-    </ul>
-</div>
+						<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-primary float-right">Commenter</a>
+						<a href="{{ path('dislike_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Downvote</a>
+						<a href="{{ path('like_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Upvote</a>
+						<a href="{{ path('report_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Report</a>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	{% endif %}
 {% endblock %}

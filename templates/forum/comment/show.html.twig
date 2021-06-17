@@ -1,16 +1,37 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}SlackOverflow{% endblock %}
+{% block title %}SlackOverflow
+{% endblock %}
 
 {% block body %}
-	{# <h3>
-		{{ topic.title }} is topic {{ topic.id }}
-	</h3>
-	<p>
-		{{ topic.content }}
-	</p> #}
-	<p>
-		{{ comment.author }} answered<br>
-		{{ comment.content}} the {{ comment.createdAt | date("m/d/Y")}} at {{ comment.createdAt | date("H:i:s")}}
-	</p>
+	<div class="d-flex container-fluid justify-content-center px-5">
+		<div class="card my-0 col-md-8 p-0">
+			<h6 class="my-1 mx-3">
+				{{ comment.author }}
+				a commenté
+				<small class="float-right">
+					le
+					{{ comment.createdAt|date("d/m/Y") }}
+					à
+					{{ comment.createdAt|date("H:i") }}</small>
+			</h5>
+			<div class="card-body">
+				<p class="card-text">{{ comment.content }}</p>
+				<h6>Score =
+					{{ comment.likeAmount }}
+				</h6>
+
+				{% if comment.author == app.user %}
+					<a href="{{ path('edit_comment', { 'comment_id': comment.id, 'post_id': comment.postId.getId}) }}" class="btn btn-primary float-left">Editer</a>
+					<a href="{{ path('delete_comment', { 'id': comment.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+				{% endif %}
+
+
+				<a href="{{ path('dislike_comment', { 'id': comment.id }) }}" class="btn btn-primary float-right">Downvote</a>
+				<a href="{{ path('like_comment', { 'id': comment.id }) }}" class="btn btn-primary float-right">Upvote</a>
+				<a href="{{ path('report_comment', { 'id': comment.id }) }}" class="btn btn-primary float-right">Report</a>
+
+			</div>
+		</div>
+	</div>
 {% endblock %}

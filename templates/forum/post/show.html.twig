@@ -3,14 +3,35 @@
 {% block title %}SlackOverflow{% endblock %}
 
 {% block body %}
-	{# <h3>
-		{{ topic.title }} is topic {{ topic.id }}
-	</h3>
-	<p>
-		{{ topic.content }}
-	</p> #}
-	<p>
-		{{ post.author }} answered<br>
-		{{ post.content}} the {{ post.createdAt | date("m/d/Y")}} at {{ post.createdAt | date("H:i:s")}}
-	</p>
-{% endblock %}
+<div class="d-flex container-fluid justify-content-center ">
+				<div class="card my-0 col-md-8 p-0">
+					<h5 class="my-1 mx-3">
+						{{ post.author }}
+						a répondu
+						<small class="float-right">
+							le
+							{{ post.createdAt|date("d/m/Y") }}
+							à
+							{{ post.createdAt|date("H:i") }}</small>
+					</h5>
+					<div class="card-body">
+						<p class="card-text">{{ post.content }}</p>
+						<h6>Score =
+							{{ post.likeAmount }}
+						</h6>
+
+						{% if post.author == app.user %}
+							<a href="{{ path('edit_post', { 'post_id': post.id, 'topic_id': post.topicId.getId}) }}" class="btn btn-primary float-left">Editer</a>
+							{% if comments[post.id] == NULL %}
+								<a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+
+							{% endif %}
+						{% endif %}
+
+						<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-primary float-right">Commenter</a>
+						<a href="{{ path('dislike_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Downvote</a>
+						<a href="{{ path('like_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Upvote</a>
+						<a href="{{ path('report_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Report</a>
+					</div>
+				</div>
+			</div>{% endblock %}

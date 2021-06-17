@@ -86,7 +86,7 @@ class PostController extends AbstractController
         /**
      * @Route("/post/{id}", name="show_post")
      * 
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function showPost(Post $post): Response
     {

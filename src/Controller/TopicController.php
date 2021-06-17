@@ -87,7 +87,7 @@ class TopicController extends AbstractController
 
         $comments = [];
         foreach ($posts as $post) {
-            $comments[$post->getId()] = $commentRepository->findBy(['postId' => $post->getId()], ['likeAmount' => 'DESC']);
+            $comments[$post->getId()] = $commentRepository->findBy(['postId' => $post->getId(), 'reported' => NULL], ['likeAmount' => 'DESC']);
         }
 
         // if (in_array($post)) {
@@ -223,7 +223,7 @@ class TopicController extends AbstractController
             return $this->redirectToRoute('all_topic');
     }
 
-        /**
+    /**
      * @Route("/topic/{id}/unreport", name="unreport_topic")
      * 
      * @IsGranted("ROLE_ADMIN")
@@ -240,6 +240,27 @@ class TopicController extends AbstractController
         }
         
             return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
+    }
+
+        /**
+     * @Route("/admin", name="admin")
+     * 
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function adminPanel(TopicRepository $topicRepository, PostRepository $postRepository, CommentRepository $commentRepository)
+    {
+
+        $topics = $topicRepository->findBy(['reported' => 1]);
+        $posts = $postRepository->findBy(['reported' => 1]);
+        $comments = $commentRepository->findBy(['reported' => 1]);
+
+        return $this->render('forum/admin/list.html.twig', [
+            'controller_name' => 'TopicController',
+            'topics' => $topics,
+            'posts' => $posts,
+            'comments' => $comments,
+        ]);
+    
     }
 
 }

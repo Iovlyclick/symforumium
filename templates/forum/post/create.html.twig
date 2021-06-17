@@ -6,20 +6,27 @@
 {% endblock %}
 
 {% block body %}
-	<h1>
-		Réponse au topic {{ topic }}
-	</h1>
+		{{ form_start(formPost) }}
+	<div class="d-flex container-fluid justify-content-center px-5">
+		<div class="card my-0 col-md-8 p-0">
+			<h6 class="card-header">
+				Réponse au topic
 
-	{{ form_start(formPost) }}
+			</h6>
+			<div class="card-body">
+				<p class="card-text">
+					{{ form_row(formPost.content, {'attr': {'rows': '8'} }) }}
+				</p>
+				<button type="submit" class='btn btn-success'>
+					{% if editMode %}
+						Editer
+					{% else %}
+						Soumettre
+					{% endif %}
+				</button>
+				{{ form_end(formPost) }}
+			</div>
+		</div>
+	</div>
 
-	{{ form_row(formPost.content) }}
-
-	<button type="submit" class='btn btn-success'>
-		{% if editMode %}
-			Edit
-		{% else %}
-			Submit
-		{% endif %}
-	</button>
-	{{ form_end(formPost) }}
 {% endblock %}

@@ -6,20 +6,27 @@
 {% endblock %}
 
 {% block body %}
-	<h1>
-		Commentaire au post {{ post }}
-	</h1>
+		{{ form_start(formComment) }}
+	<div class="d-flex container-fluid justify-content-center px-5">
+		<div class="card my-0 col-md-8 p-0">
+			<h6 class="card-header">
+				Réponse au topic
 
-	{{ form_start(formComment) }}
+			</h6>
+			<div class="card-body">
+				<p class="card-text">
+					{{ form_row(formComment.content, {'attr': {'rows': '8'} }) }}
+				</p>
+				<button type="submit" class='btn btn-success'>
+					{% if editMode %}
+						Editer
+					{% else %}
+						Soumettre
+					{% endif %}
+				</button>
+				{{ form_end(formComment) }}
+			</div>
+		</div>
+	</div>
 
-	{{ form_row(formComment.content) }}
-
-	<button type="submit" class='btn btn-success'>
-		{% if editMode %}
-			Edit
-		{% else %}
-			Submit
-		{% endif %}
-	</button>
-	{{ form_end(formComment) }}
 {% endblock %}

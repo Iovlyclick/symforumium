@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Panneau d'admin
+	| SlackOverflow
+{% endblock %}
+
+{% block body %}
+	{% if topics %}
+    <h3 class="text-center my-3">Topics à modérer</h3>
+		{% for topic in topics %}
+
+			<div class="d-flex container-fluid justify-content-center ">
+				<div class="card mt-5 mb-0 col-md-8 p-0">
+					<h5 class="card-header">Posté par
+						{{ topic.author }}<small class="float-right">
+							le
+							{{ topic.createdAt|date("d/m/Y") }}
+							à
+							{{ topic.createdAt|date("H:i") }}</small>
+					</h5>
+					<div class="card-body">
+						<h5 class="card-title">{{ topic.title }}</h5>
+						<p class="card-text">{{ topic.content }}</p>
+						<h6>Score =
+							{{ topic.likeAmount }}
+						</h6>
+                        <a href="{{ path('delete_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+						<a href="{{ path('unreport_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Unreport</a>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+
+	{% endif %}
+	{% if posts %}
+    <h3 class="text-center my-3">Posts à modérer</h3>
+		{% for post in posts %}
+			<div class="d-flex container-fluid justify-content-center ">
+				<div class="card my-0 col-md-8 p-0">
+					<h5 class="my-1 mx-3">
+						{{ post.author }}
+						a répondu
+						<small class="float-right">
+							le
+							{{ post.createdAt|date("d/m/Y") }}
+							à
+							{{ post.createdAt|date("H:i") }}</small>
+					</h5>
+					<div class="card-body">
+						<p class="card-text">{{ post.content }}</p>
+						<h6>Score =
+							{{ post.likeAmount }}
+						</h6>
+
+                        <a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+						<a href="{{ path('unreport_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Unreport</a>
+					</div>
+				</div>
+			</div>
+
+
+		{% endfor %}
+	{% endif %}
+	{% if comments %}
+    <h3 class="text-center my-3">Commentaires à modérer</h3>
+		{% for  comment in  comments %}
+
+			<div class="d-flex container-fluid justify-content-center px-5">
+				<div class="card my-0 col-md-8 p-0">
+					<h6 class="my-1 mx-3">
+						{{ comment.author }}
+						a commenté
+						<small class="float-right">
+							le
+							{{ comment.createdAt|date("d/m/Y") }}
+							à
+							{{ comment.createdAt|date("H:i") }}</small>
+					</h5>
+					<div class="card-body">
+						<p class="card-text">{{ comment.content }}</p>
+						<h6>Score =
+							{{ comment.likeAmount }}
+						</h6>
+
+                        <a href="{{ path('delete_comment', { 'id': comment.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+						<a href="{{ path('unreport_comment', { 'id': comment.id }) }}" class="btn btn-primary float-right">Unreport</a>
+
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	{% endif %}
+{% endblock %}

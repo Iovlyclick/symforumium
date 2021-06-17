@@ -112,10 +112,7 @@ class CommentController extends AbstractController
         
         $topics = $topicRepository->findAll();
 
-        return $this->render('forum/topic/list.html.twig', [
-            'controller_name' => 'ForumController',
-            'topics' => $topics,
-        ]);
+        return $this->redirectToRoute('show_topic', ['id' => $comment->getPostId()->getTopicId()->getId()]);
     }
 
     /**
@@ -151,8 +148,7 @@ class CommentController extends AbstractController
             $manager->flush();
         }
 
-        // return $this->redirectToRoute('show_topic', ['id' => $comment->getTopicId()->getId()]);
-        return $this->redirectToRoute('show_comment', ['id' => $comment->getId()]);
+        return $this->redirectToRoute('show_topic', ['id' => $comment->getPostId()->getTopicId()->getId()]);
 
     }
 
@@ -188,9 +184,7 @@ class CommentController extends AbstractController
             $manager->flush();
         }
 
-        // return $this->redirectToRoute('show_topic', ['id' => $comment->getTopicId()->getId()]);
-        return $this->redirectToRoute('show_comment', ['id' => $comment->getId()]);
-
+        return $this->redirectToRoute('show_topic', ['id' => $comment->getPostId()->getTopicId()->getId()]);
     }
 
     /**

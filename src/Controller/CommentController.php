@@ -105,17 +105,13 @@ class CommentController extends AbstractController
      * 
      *  @IsGranted("ROLE_USER")
      */
-    public function deleteComment(Comment $comment, EntityManagerInterface $manager, TopicRepository $topicRepository): Response
+    public function deleteComment(Comment $comment, EntityManagerInterface $manager): Response
     {
-        $manager->remove($comment);
+        $comment->setArchived(TRUE);
+        $manager->persist($comment);
         $manager->flush();
         
-        $topics = $topicRepository->findAll();
-
-        return $this->render('forum/topic/list.html.twig', [
-            'controller_name' => 'ForumController',
-            'topics' => $topics,
-        ]);
+        return $this->redirectToRoute('show_topic', ['id' => $comment->getPostId()->getTopicId()->getId()]);
     }
 
     /**
@@ -151,8 +147,7 @@ class CommentController extends AbstractController
             $manager->flush();
         }
 
-        // return $this->redirectToRoute('show_topic', ['id' => $comment->getTopicId()->getId()]);
-        return $this->redirectToRoute('show_comment', ['id' => $comment->getId()]);
+        return $this->redirectToRoute('show_topic', ['id' => $comment->getPostId()->getTopicId()->getId()]);
 
     }
 
@@ -188,9 +183,7 @@ class CommentController extends AbstractController
             $manager->flush();
         }
 
-        // return $this->redirectToRoute('show_topic', ['id' => $comment->getTopicId()->getId()]);
-        return $this->redirectToRoute('show_comment', ['id' => $comment->getId()]);
-
+        return $this->redirectToRoute('show_topic', ['id' => $comment->getPostId()->getTopicId()->getId()]);
     }
 
     /**

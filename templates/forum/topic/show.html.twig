@@ -18,6 +18,18 @@
 			<div class="card-body">
 				<h5 class="card-title">{{ topic.title }}</h5>
 				<p class="card-text">{{ topic.content }}</p>
+				<h6>Score =
+					{{ topic.likeAmount }}
+				</h6>
+				{% if app.user.roles[1] == 'ROLE_ADMIN' or topic.author == app.user and date(topic.createdAt) > date('-30minutes') and topic.likeAmount == 0 %}
+					<a href="{{ path('edit_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Editer</a>
+					<a href="{{ path('delete_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+				{% endif %}
+				<a href="{{ path('create_post', { 'topic_id': topic.id }) }}" class="btn btn-primary float-right">Répondre</a>
+				<a href="{{ path('dislike_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Downvote</a>
+				<a href="{{ path('like_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Upvote</a>
+				<a href="{{ path('report_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Report</a>
+
 			</div>
 				<a href="{{ path('create_post', { 'topic_id': topic.id }) }}" class="btn btn-warning">Répondre</a>
 		</div>
@@ -37,6 +49,22 @@
 					</h5>
 					<div class="card-body">
 						<p class="card-text">{{ post.content }}</p>
+						<h6>Score =
+							{{ post.likeAmount }}
+						</h6>
+
+						{% if post.author == app.user %}
+							<a href="{{ path('edit_post', { 'post_id': post.id, 'topic_id': topic.id}) }}" class="btn btn-primary float-left">Editer</a>
+							{% if comments[post.id] == NULL %}
+								<a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+
+							{% endif %}
+						{% endif %}
+
+						<a href="{{ path('create_comment', { 'post_id': post.id }) }}" class="btn btn-primary float-right">Commenter</a>
+						<a href="{{ path('dislike_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Downvote</a>
+						<a href="{{ path('like_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Upvote</a>
+						<a href="{{ path('report_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Report</a>
 					</div>
 				
 
@@ -56,6 +84,20 @@
 								</h6>
 							<div class="card-body">
 								<p class="card-text">{{ comment.content }}</p>
+								<h6>Score =
+									{{ comment.likeAmount }}
+								</h6>
+
+								{% if comment.author == app.user %}
+									<a href="{{ path('edit_comment', { 'comment_id': comment.id, 'post_id': post.id}) }}" class="btn btn-primary float-left">Editer</a>
+									<a href="{{ path('delete_comment', { 'id': comment.id }) }}" class="btn btn-primary float-left">Supprimer</a>
+								{% endif %}
+
+
+								<a href="{{ path('dislike_comment', { 'id': comment.id }) }}" class="btn btn-primary float-right">Downvote</a>
+								<a href="{{ path('like_comment', { 'id': comment.id }) }}" class="btn btn-primary float-right">Upvote</a>
+								<a href="{{ path('report_comment', { 'id': comment.id }) }}" class="btn btn-primary float-right">Report</a>
+
 							</div>
 						</div>
 					</div>

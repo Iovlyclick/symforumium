@@ -29,7 +29,7 @@ class TopicController extends AbstractController
     public function listTopic(TopicRepository $topicRepository): Response
     {
 
-        $topics = $topicRepository->findBy(['reported' => NULL]);
+        $topics = $topicRepository->findBy(['reported' => NULL, 'archived' => NULL], ['likeAmount' => 'DESC']);
 
         return $this->render('forum/topic/list.html.twig', [
             'controller_name' => 'TopicController',
@@ -83,16 +83,12 @@ class TopicController extends AbstractController
      */
     public function showTopic(Topic $topic, PostRepository $postRepository, CommentRepository $commentRepository): Response
     {
-        $posts = $postRepository->findBy(['topicId' => $topic->getId(), 'reported' => NULL], ['likeAmount' =>'DESC']);
+        $posts = $postRepository->findBy(['topicId' => $topic->getId(), 'reported' => NULL, 'archived' => NULL], ['likeAmount' =>'DESC']);
 
         $comments = [];
         foreach ($posts as $post) {
-            $comments[$post->getId()] = $commentRepository->findBy(['postId' => $post->getId()], ['likeAmount' => 'DESC']);
+            $comments[$post->getId()] = $commentRepository->findBy(['postId' => $post->getId(), 'reported' => NULL, 'archived' => NULL], ['likeAmount' => 'DESC']);
         }
-
-        // if (in_array($post)) {
-        //     # code...
-        // }
 
         return $this->render('forum/topic/show.html.twig', [
             'controller_name' => 'TopicController',
@@ -115,15 +111,11 @@ class TopicController extends AbstractController
             return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
         }
 
-        $manager->remove($topic);
+        $topic->setArchived(TRUE);
+        $manager->persist($topic);
         $manager->flush();
         
-        $topics = $topicRepository->findAll();
-
-        return $this->render('forum/topic/list.html.twig', [
-            'controller_name' => 'TopicController',
-            'topics' => $topics,
-        ]);
+        return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
     }
 
     /**
@@ -159,7 +151,6 @@ class TopicController extends AbstractController
             $manager->flush();
         }
 
-        // return $this->redirectToRoute('show_topic', ['id' => $topic->getTopicId()->getId()]);
         return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
 
     }
@@ -196,7 +187,6 @@ class TopicController extends AbstractController
             $manager->flush();
         }
 
-        // return $this->redirectToRoute('show_topic', ['id' => $topic->getTopicId()->getId()]);
         return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
 
     }
@@ -223,7 +213,7 @@ class TopicController extends AbstractController
             return $this->redirectToRoute('all_topic');
     }
 
-        /**
+    /**
      * @Route("/topic/{id}/unreport", name="unreport_topic")
      * 
      * @IsGranted("ROLE_ADMIN")
@@ -240,6 +230,27 @@ class TopicController extends AbstractController
         }
         
             return $this->redirectToRoute('show_topic', ['id' => $topic->getId()]);
+    }
+
+        /**
+     * @Route("/admin", name="admin")
+     * 
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function adminPanel(TopicRepository $topicRepository, PostRepository $postRepository, CommentRepository $commentRepository)
+    {
+
+        $topics = $topicRepository->findBy(['reported' => 1]);
+        $posts = $postRepository->findBy(['reported' => 1]);
+        $comments = $commentRepository->findBy(['reported' => 1]);
+
+        return $this->render('forum/admin/list.html.twig', [
+            'controller_name' => 'TopicController',
+            'topics' => $topics,
+            'posts' => $posts,
+            'comments' => $comments,
+        ]);
+    
     }
 
 }

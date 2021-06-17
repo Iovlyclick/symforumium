@@ -6,22 +6,27 @@
 {% endblock %}
 
 {% block body %}
-<div class="mx-auto" style="width: 50%;">
-	<h1 class="pt-5">
-		Création d'un sujet
-	</h1>
 
 	{{ form_start(formTopic) }}
-
-	{{ form_row(formTopic.title) }}
-	{{ form_row(formTopic.content) }}
-
-	<button type="submit" class='btn btn-warning'>
-		{% if editMode %}
-			Éditer
-		{% else %}
-			Valider
-		{% endif %}
-	</button>
-	{{ form_end(formTopic) }}
+	<div class="d-flex container-fluid justify-content-center px-5">
+		<div class="card my-0 col-md-8 p-0 mt-5">
+			<h6 class="card-header">
+				Création d'un sujet
+			</h6>
+			<div class="card-body">
+					{{ form_row(formTopic.title) }}
+				<p class="card-text">
+					{{ form_row(formTopic.content, {'attr': {'rows': '8'} }) }}
+				</p>
+				<button type="submit" class='btn btn-warning'>
+					{% if editMode %}
+						Editer
+					{% else %}
+						Soumettre
+					{% endif %}
+				</button>
+				{{ form_end(formTopic) }}
+			</div>
+		</div>
+	</div>
 {% endblock %}

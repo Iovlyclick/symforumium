@@ -6,24 +6,27 @@
 {% endblock %}
 
 {% block body %}
-<div class="mx-auto" style="width: 50%;">
-	<h1 class="pt-5">
-		Réponse au sujet {{ topic }}
-	</h1>
-
-	<div>
 		{{ form_start(formPost) }}
+	<div class="d-flex container-fluid justify-content-center px-5">
+		<div class="card my-0 col-md-8 p-0">
+			<h6 class="card-header">
+				Réponse au topic
 
-		{{ form_row(formPost.content) }}
+			</h6>
+			<div class="card-body">
+				<p class="card-text">
+					{{ form_row(formPost.content, {'attr': {'rows': '8'} }) }}
+				</p>
+				<button type="submit" class='btn btn-success'>
+					{% if editMode %}
+						Editer
+					{% else %}
+						Soumettre
+					{% endif %}
+				</button>
+				{{ form_end(formPost) }}
+			</div>
+		</div>
 	</div>
 
-	<button type="submit" class='btn btn-warning'>
-		{% if editMode %}
-			Éditer
-		{% else %}
-			Poster
-		{% endif %}
-	</button>
-	{{ form_end(formPost) }}
-</div>
 {% endblock %}

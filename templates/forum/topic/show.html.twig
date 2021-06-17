@@ -39,7 +39,7 @@
                         {% set toto = TRUE %}
                     {% endif %}
                 {% endfor %}
-                {% if toto == FALSE and topic.author == app.user and date(topic.createdAt) < date('-30minutes') and topic.likeAmount == 0 %}
+                {% if toto == FALSE and topic.author == app.user and date(topic.createdAt) > date('-30minutes') and topic.likeAmount == 0 %}
                     <a href="{{ path('edit_topic', { 'id': topic.id }) }}" class="btn float-right bi bi-pencil-square"></a>
                     <a href="{{ path('delete_topic', { 'id': topic.id }) }}" class="btn bi bi-trash float-right text-danger"></a>
                 {% endif %}

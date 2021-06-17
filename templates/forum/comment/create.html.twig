@@ -2,22 +2,22 @@
 
 {% form_theme formComment 'bootstrap_4_layout.html.twig' %}
 
-{% block title %}Welcome to SlackOverflow
+{% block title %}Poster un commentaire
 {% endblock %}
 
 {% block body %}
 		{{ form_start(formComment) }}
 	<div class="d-flex container-fluid justify-content-center px-5">
-		<div class="card my-0 col-md-8 p-0">
+		<div class="card my-0 col-md-8 p-0 mt-5">
 			<h6 class="card-header">
-				Réponse au topic
+				Commenter
 
 			</h6>
 			<div class="card-body">
 				<p class="card-text">
 					{{ form_row(formComment.content, {'attr': {'rows': '8'} }) }}
 				</p>
-				<button type="submit" class='btn btn-success'>
+				<button type="submit" class='btn btn-secondary'>
 					{% if editMode %}
 						Editer
 					{% else %}

@@ -6,7 +6,23 @@
 {% endblock %}
 
 {% block body %}
-	{% if topics %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="{{ path('admin') }}">Admin panel</a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+		<a class="nav-link" href="{{ path('all_post') }}">Tous les posts</a>
+      </li>
+      <li class="nav-item">
+		<a class="nav-link" href="{{ path('all_comment') }}">Tous les commentaires</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+	{% if topics is defined %}
     <h3 class="text-center my-3">Topics à modérer</h3>
 		{% for topic in topics %}
 
@@ -25,8 +41,8 @@
 						<h6>Score =
 							{{ topic.likeAmount }}
 						</h6>
-                        <a href="{{ path('delete_topic', { 'id': topic.id }) }}" class="btn btn-primary float-left">Supprimer</a>
-						<a href="{{ path('unreport_topic', { 'id': topic.id }) }}" class="btn btn-primary float-right">Unreport</a>
+                        <a href="{{ path('delete_topic', { 'id': topic.id }) }}" class="btn btn-danger float-left">Supprimer</a>
+						<a href="{{ path('unreport_topic', { 'id': topic.id }) }}" class="btn btn-success float-right">Unreport</a>
 					</div>
 				</div>
 			</div>
@@ -53,8 +69,8 @@
 							{{ post.likeAmount }}
 						</h6>
 
-                        <a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-primary float-left">Supprimer</a>
-						<a href="{{ path('unreport_post', { 'id': post.id }) }}" class="btn btn-primary float-right">Unreport</a>
+                        <a href="{{ path('delete_post', { 'id': post.id }) }}" class="btn btn-danger float-left">Supprimer</a>
+						<a href="{{ path('unreport_post', { 'id': post.id }) }}" class="btn btn-success float-right">Unreport</a>
 					</div>
 				</div>
 			</div>
@@ -83,8 +99,8 @@
 							{{ comment.likeAmount }}
 						</h6>
 
-                        <a href="{{ path('delete_comment', { 'id': comment.id }) }}" class="btn btn-primary float-left">Supprimer</a>
-						<a href="{{ path('unreport_comment', { 'id': comment.id }) }}" class="btn btn-primary float-right">Unreport</a>
+                        <a href="{{ path('delete_comment', { 'id': comment.id }) }}" class="btn btn-danger float-left">Supprimer</a>
+						<a href="{{ path('unreport_comment', { 'id': comment.id }) }}" class="btn btn-success float-right">Unreport</a>
 
 					</div>
 				</div>

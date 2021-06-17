@@ -1,20 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des sujet | Slackoverflow
+{% block title %}
+    Liste des sujet | Slackoverflow
+    
 {% endblock %}
 
 {% block body %}
-	{% for topic in topics %}
-	<div class="d-flex container-fluid justify-content-center ">
-		<div class="card my-5 col-md-8 p-0">
-			<h5 class="card-header">Posté par {{ topic.author }}<small class="float-right"> le {{ topic.createdAt|date("d/m/Y") }} à {{ topic.createdAt|date("H:i") }}</small></h5>
-			<div class="card-body">
-				<h5 class="card-title">{{ topic.title }}</h5>
-				<p class="card-text">{{ topic.content }}</p>
-				<a href="{{ path('show_topic', { 'id': topic.id }) }}" class="btn btn-primary">Voir le topic</a>
-			</div>
-		</div>
-	</div>
 
-	{% endfor %}
+    {% if topics is defined %}
+        {% for topic in topics %}
+            <div class="d-flex container-fluid justify-content-center">
+                <div class="card my-3 col-md-8 p-0">
+                    <h5 class="card-header bg-warning">
+                        Posté par 
+                        {{ topic.author }}
+                        <small class="float-right">
+                            le 
+                            {{ topic.createdAt|date("d/m/Y") }}
+                            à 
+                            {{ topic.createdAt|date("H:i") }}
+                        </small>
+                    </h5>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {{ topic.title }}
+                        </h5>
+                        <p class="card-text">
+                            {{ topic.content }}
+                        </p>
+                        <a href="{{ path('show_topic', { 'id': topic.id }) }}" class="btn btn-warning">
+                            Voir le topic
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+    {% endif %}
 {% endblock %}

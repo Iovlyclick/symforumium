@@ -2,22 +2,21 @@
 
 {% form_theme formPost 'bootstrap_4_layout.html.twig' %}
 
-{% block title %}Welcome to SlackOverflow
+{% block title %}Répondre au sujet
 {% endblock %}
 
 {% block body %}
 		{{ form_start(formPost) }}
 	<div class="d-flex container-fluid justify-content-center px-5">
-		<div class="card my-0 col-md-8 p-0">
+		<div class="card my-0 col-md-8 p-0 mt-5">
 			<h6 class="card-header">
-				Réponse au topic
-
+				Réponse au sujet
 			</h6>
 			<div class="card-body">
 				<p class="card-text">
 					{{ form_row(formPost.content, {'attr': {'rows': '8'} }) }}
 				</p>
-				<button type="submit" class='btn btn-success'>
+				<button type="submit" class='btn btn-warning'>
 					{% if editMode %}
 						Editer
 					{% else %}
